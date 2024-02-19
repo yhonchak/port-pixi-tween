@@ -12,6 +12,7 @@
     "pixi.js": "^7.4.0"
   },
   "devDependencies": {
+    "awesome-typescript-loader": "^5.2.1",
     "typescript": "^5.3.3",
     "webpack": "^5.90.3",
     "webpack-cli": "^5.1.4"
