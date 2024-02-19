@@ -1,0 +1,11 @@
+{
+  "name": "port-pixi-tween",
+  "version": "1.0.0",
+  "description": "Visualization of the port operations using PixiJS, TweenJS and Typescript",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
