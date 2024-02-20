@@ -7,6 +7,21 @@
     <title>PixiJS TypeScript Project</title>
 </head>
 <body>
-    <script src="dist/bundle.js"></script>
+    <!-- <script src="dist/bundle.js"></script> -->
+
+    <script type="text/javascript">
+      const script = document.createElement('script');
+      script.src = 'dist/bundle.js?ac' + Math.random();
+
+      script.addEventListener('load', () => {
+        console.log('Bundle loaded successfully');
+      });
+
+      script.addEventListener('error', () => {
+        console.error('Error loading bundle');
+      });
+
+      document.body.appendChild(script);
+    </script>
 </body>
 </html>
