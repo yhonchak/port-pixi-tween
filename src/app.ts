@@ -1,18 +1,18 @@
 import * as PIXI from 'pixi.js';
+import { Port } from './port.class';
+
+const appWidth: number = 900;
+const appHeight: number = 600;
+const appBg: number = 0x141163;
 
 // Create a PixiJS application
 const app = new PIXI.Application({
-    width: 800,
-    height: 600,
-    backgroundColor: 0x1099bb,
+    width: appWidth,
+    height: appHeight,
+    backgroundColor: appBg,
 });
 document.body.appendChild(app.view as unknown as Node);
 
-// Create a new PIXI.Graphics object
-const graphics = new PIXI.Graphics();
-graphics.beginFill(0xff0000);
-graphics.drawRect(0, 0, 100, 100);
-graphics.endFill();
-
-// Add the graphics to the stage
-app.stage.addChild(graphics);
+// Create port
+const portWidth: number = Math.round(appWidth / 3);
+const port = new Port(app, portWidth, appHeight);
