@@ -4,8 +4,8 @@ import { Dock } from './dock.class';
 export class Port {
     private readonly bg: number = 0x17577E;
 
-    private static readonly dockWidth: number = 40;
-    private static readonly dockHeight: number = 120;
+    static readonly dockWidth: number = 40;
+    static readonly dockHeight: number = 120;
 
     private readonly app: PIXI.Application;
     private width: number;
