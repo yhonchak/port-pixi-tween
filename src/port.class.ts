@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { Dock } from './dock.class';
+import { Ship } from './ship.class';
 
 export class Port {
     private readonly bg: number = 0x17577E;
@@ -11,12 +12,14 @@ export class Port {
     private width: number;
     private height: number;
     private docks: Dock[];
+    private ships: Ship[];
 
     constructor(app: PIXI.Application, width: number, height: number) {
         this.app = app;
         this.width = width;
         this.height = height;
         this.docks = [];
+        this.ships = [];
 
         // Create port graphics
         const portGraphics: PIXI.Graphics = new PIXI.Graphics();
@@ -32,5 +35,9 @@ export class Port {
             const dock: Dock = new Dock(this.app, dockX, dockY, Port.dockWidth, Port.dockHeight);
             this.docks.push(dock);
         }
+
+        // Create one ship
+        const ship: Ship = new Ship(this.app);
+        this.ships.push(ship);
     }
 }
