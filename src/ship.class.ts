@@ -21,14 +21,28 @@ export class Ship {
 
         this.app.stage.addChild(this.sprite);
 
-        const targetX = 100;
-        const targetY = 100;
-        const duration = 2000;
+        this.moveTo(100, 100);
+    }
 
-        const tween: Tween<PIXI.ObservablePoint> = new Tween(this.sprite.position)
+    /**
+     * Provides the sprite's animated movement from it's start position to the target position.
+     *
+     * @param targetX - target position `x`
+     * @param targetY - target position `y`
+     * @param duration - movement duration in milliseconds
+     * @param startingDelay - delay in milliseconds before starting a movement
+     * @returns Tween<PIXI.ObservablePoint>
+     */
+    moveTo(
+        targetX: number,
+        targetY: number,
+        duration: number = 5000,
+        startingDelay: number = 1000
+    ): Tween<PIXI.ObservablePoint> {
+        return new Tween(this.sprite.position)
             .to({ x: targetX, y: targetY }, duration)
             .easing(TWEEN.Easing.Linear.None)
-            .start(1000);
+            .start(startingDelay);
     }
 }
 
