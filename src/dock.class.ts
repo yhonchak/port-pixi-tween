@@ -2,15 +2,15 @@ import * as PIXI from 'pixi.js';
 
 export class Dock {
     private app: PIXI.Application;
-    private dockGraphics: PIXI.Graphics;
+    private sprite: PIXI.Graphics;
 
     constructor(app: PIXI.Application, x: number, y: number, width: number, height: number) {
         this.app = app;
 
-        this.dockGraphics = new PIXI.Graphics();
-        this.dockGraphics.beginFill(0xffff00);
-        this.dockGraphics.drawRect(x, y, width, height);
-        this.dockGraphics.endFill();
-        this.app.stage.addChild(this.dockGraphics);
+        this.sprite = new PIXI.Graphics();
+        this.sprite.beginFill(0xffff00);
+        this.sprite.drawRect(x, y, width, height);
+        this.sprite.endFill();
+        this.app.stage.addChild(this.sprite);
     }
 }
