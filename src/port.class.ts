@@ -52,5 +52,8 @@ export class Port {
         // Create one ship
         const ship: Ship = new Ship(this.app, this.appWidth, 0);
         this.ships.push(ship);
+
+        // Moves ship to the first dock
+        ship.moveTo(this.docks[0].position);
     }
 }
