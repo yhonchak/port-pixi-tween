@@ -32,9 +32,3 @@ export class Ship {
     }
 }
 
-function animate(): void {
-    requestAnimationFrame(animate);
-    TWEEN.update();
-}
-
-animate();
