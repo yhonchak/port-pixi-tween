@@ -35,11 +35,11 @@ export class Port {
         this.ships = [];
 
         // Create port graphics
-        const portGraphics: PIXI.Graphics = new PIXI.Graphics();
-        portGraphics.beginFill(this.bg);
-        portGraphics.drawRect(0, 0, width, height);
-        portGraphics.endFill();
-        this.app.stage.addChild(portGraphics);
+        const sprite: PIXI.Graphics = new PIXI.Graphics();
+        sprite.beginFill(this.bg);
+        sprite.drawRect(0, 0, width, height);
+        sprite.endFill();
+        this.app.stage.addChild(sprite);
 
         // Create docks
         for (let i: number = 0; i < 4; i++) {

@@ -3,7 +3,7 @@ import { Position } from './types';
 
 export class Dock {
     private app: PIXI.Application;
-    private dockGraphics: PIXI.Graphics;
+    private sprite: PIXI.Graphics;
 
     /**
      * The class constructor.
@@ -17,13 +17,13 @@ export class Dock {
     constructor(app: PIXI.Application, x: number, y: number, width: number, height: number) {
         this.app = app;
 
-        this.dockGraphics = new PIXI.Graphics();
-        this.dockGraphics.beginFill(0xffff00);
-        this.dockGraphics.drawRect(0, 0, width, height);
-        this.dockGraphics.endFill();
-        this.dockGraphics.x = x;
-        this.dockGraphics.y = y;
-        this.app.stage.addChild(this.dockGraphics);
+        this.sprite = new PIXI.Graphics();
+        this.sprite.beginFill(0xffff00);
+        this.sprite.drawRect(0, 0, width, height);
+        this.sprite.endFill();
+        this.sprite.x = x;
+        this.sprite.y = y;
+        this.app.stage.addChild(this.sprite);
     }
 
     /**
@@ -32,8 +32,8 @@ export class Dock {
      */
     get position(): Position {
         return {
-            x: this.dockGraphics.x,
-            y: this.dockGraphics.y
+            x: this.sprite.x,
+            y: this.sprite.y
         }
     }
 }
