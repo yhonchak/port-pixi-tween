@@ -14,8 +14,8 @@ export class Ship {
      * The class constructor.
      *
      * @param app - link to the Pixi Application
-     * @param x - the sprite's `x` position
-     * @param y - the sprite's `y` position
+     * @param x - the ship `x` position
+     * @param y - the ship `y` position
      */
     constructor(app: PIXI.Application, x: number = 0, y: number = 0) {
         this.app = app;
