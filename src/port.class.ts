@@ -53,7 +53,8 @@ export class Port {
         const ship: Ship = new Ship(this.app, this.appWidth, 0);
         this.ships.push(ship);
 
-        // Moves ship to the first dock
-        ship.moveTo(this.docks[0].position);
+        // Moves ship to the random dock
+        const randomDock: number = Math.floor(Math.random() * 4); // Generates a random number between 0 and 3
+        ship.moveTo(this.docks[randomDock].position);
     }
 }
