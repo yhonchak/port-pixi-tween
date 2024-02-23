@@ -50,7 +50,7 @@ export class Port {
         }
 
         // Create one ship
-        const ship: Ship = new Ship(this.app);
+        const ship: Ship = new Ship(this.app, this.appWidth, 0);
         this.ships.push(ship);
     }
 }
