@@ -32,7 +32,7 @@ export class Ship {
     }
 
     /**
-     * Provides the sprite's animated movement from it's start position to the target position.
+     * Provides the sprite's animated movement from its start position to the target position.
      *
      * @param targetX - target position `x`
      * @param targetY - target position `y`
