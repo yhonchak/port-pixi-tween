@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import * as TWEEN from '@tweenjs/tween.js';
 import { Tween } from '@tweenjs/tween.js';
+import { Position } from './types';
 
 export class Ship {
     static readonly width: number = 90;
@@ -28,26 +29,24 @@ export class Ship {
 
         this.app.stage.addChild(this.sprite);
 
-        this.moveTo(100, 100);
+        this.moveTo({x: 100, y: 100});
     }
 
     /**
      * Provides the sprite's animated movement from its start position to the target position.
      *
-     * @param targetX - target position `x`
-     * @param targetY - target position `y`
+     * @param targetPosition - target position {`x`,`y}
      * @param duration - movement duration in milliseconds
      * @param startingDelay - delay in milliseconds before starting a movement
      * @returns Tween<PIXI.ObservablePoint>
      */
     moveTo(
-        targetX: number,
-        targetY: number,
+        targetPosition: Position,
         duration: number = 5000,
         startingDelay: number = 1000
     ): Tween<PIXI.ObservablePoint> {
         return new Tween(this.sprite.position)
-            .to({ x: targetX, y: targetY }, duration)
+            .to({ x: targetPosition.x, y: targetPosition.y }, duration)
             .easing(TWEEN.Easing.Linear.None)
             .start(startingDelay);
     }
