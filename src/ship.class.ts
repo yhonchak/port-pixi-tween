@@ -9,15 +9,22 @@ export class Ship {
     private app: PIXI.Application;
     private sprite: PIXI.Graphics;
 
-    constructor(app: PIXI.Application) {
+    /**
+     * The class constructor.
+     *
+     * @param app - link to the Pixi Application
+     * @param x - the object's position `x`
+     * @param y - the object's position `y`
+     */
+    constructor(app: PIXI.Application, x: number = 0, y: number = 0) {
         this.app = app;
 
         this.sprite = new PIXI.Graphics();
         this.sprite.beginFill(0xABABAB);
         this.sprite.drawRect(0, 0, Ship.width, Ship.height);
         this.sprite.endFill();
-        this.sprite.x = 300;
-        this.sprite.y = 300;
+        this.sprite.x = x;
+        this.sprite.y = y;
 
         this.app.stage.addChild(this.sprite);
 
