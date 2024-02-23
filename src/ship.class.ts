@@ -28,8 +28,6 @@ export class Ship {
         this.sprite.y = y;
 
         this.app.stage.addChild(this.sprite);
-
-        this.moveTo({x: 100, y: 100});
     }
 
     /**
