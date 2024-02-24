@@ -13,7 +13,7 @@ export class Ship {
     /**
      * The class constructor.
      *
-     * @param app - link to the Pixi Application
+     * @param app - reference to the Pixi Application
      * @param x - the ship `x` position
      * @param y - the ship `y` position
      */

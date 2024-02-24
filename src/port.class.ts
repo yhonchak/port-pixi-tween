@@ -19,7 +19,7 @@ export class Port {
     /**
      *  The class constructor.
      *
-     * @param app - link to the Pixi Application
+     * @param app - reference to the Pixi Application
      * @param width - the port width
      * @param height - the port height
      * @param appWidth - the application width

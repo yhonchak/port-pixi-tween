@@ -8,7 +8,7 @@ export class Dock {
     /**
      * The class constructor.
      *
-     * @param app - link to the Pixi Application
+     * @param app - reference to the Pixi Application
      * @param x - the dock `x` position
      * @param y - the dock `y` position
      * @param width - the dock width
