@@ -62,8 +62,19 @@ export class Port {
 
         // Chain the tweens with a delay of 1 second between them
         shipToDock.chain(shipToOutside);
-        shipToOutside.delay(1000);
+        shipToOutside.delay(1000).onComplete(() => {
+            this.removeShip(ship);
+        });
         // Start a tween within delay of 1 second
         shipToDock.start(1000);
+    }
+
+    /**
+     * Removes ship instance from the app.
+     * @param ship be removed
+     */
+    private removeShip(ship: Ship): void {
+        ship.remove();
+        ship = null;
     }
 }
