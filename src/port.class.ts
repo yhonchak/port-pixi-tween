@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { Dock } from './dock.class';
 import { Ship } from './ship.class';
+import { Tween } from '@tweenjs/tween.js';
 
 export class Port {
     private readonly bg: number = 0x17577E;
@@ -53,8 +54,16 @@ export class Port {
         const ship: Ship = new Ship(this.app, this.appWidth, 0);
         this.ships.push(ship);
 
-        // Moves ship to the random dock
         const randomDock: number = Math.floor(Math.random() * 4); // Generates a random number between 0 and 3
-        ship.moveTo(this.docks[randomDock].position);
+        // Move ship to the random dock
+        const shipToDock: Tween<PIXI.ObservablePoint> = ship.moveTo(this.docks[randomDock].position);
+        // Move ship outside the stage
+        const shipToOutside: Tween<PIXI.ObservablePoint> = ship.moveTo({ x: this.appWidth, y: this.appHeight });
+
+        // Chain the tweens with a delay of 1 second between them
+        shipToDock.chain(shipToOutside);
+        shipToOutside.delay(1000);
+        // Start a tween within delay of 1 second
+        shipToDock.start(1000);
     }
 }
