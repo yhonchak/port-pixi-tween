@@ -55,13 +55,13 @@ export class Port {
         const barrierColor: number = 0xEED202;
 
         const barrierTop: PIXI.Graphics = new PIXI.Graphics();
-        barrierTop.beginFill(0xFFFF00);
+        barrierTop.beginFill(barrierColor);
         barrierTop.drawRect(width - barrierWidth, 0, barrierWidth, this.gateTopPosition.y);
         barrierTop.endFill();
         this.app.stage.addChild(barrierTop);
 
         const barrierBottom: PIXI.Graphics = new PIXI.Graphics();
-        barrierBottom.beginFill(0xFFFF00);
+        barrierBottom.beginFill(barrierColor);
         barrierBottom.drawRect(width - barrierWidth, this.gateBottomPosition.y, barrierWidth, this.height);
         barrierBottom.endFill();
         this.app.stage.addChild(barrierBottom);
