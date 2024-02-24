@@ -71,7 +71,7 @@ export class Port {
 
     /**
      * Removes ship instance from the app.
-     * @param ship be removed
+     * @param ship to be removed
      */
     private removeShip(ship: Ship): void {
         ship.remove();
