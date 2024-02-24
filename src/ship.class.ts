@@ -46,5 +46,14 @@ export class Ship {
             .to({ x: targetPosition.x, y: targetPosition.y }, duration)
             .easing(TWEEN.Easing.Linear.None);
     }
+
+    /**
+     * Removes the ship from the app stage.
+     * Destroys the sprite object completely.
+     */
+    remove(): void {
+        this.app.stage.removeChild(this.sprite);
+        this.sprite.destroy({ children: true, texture: true, baseTexture: true });
+    }
 }
 
