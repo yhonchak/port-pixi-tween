@@ -40,7 +40,7 @@ export class Ship {
      */
     moveTo(
         targetPosition: Position,
-        duration: number = 5000
+        duration: number = 4000
     ): Tween<PIXI.ObservablePoint> {
         return new Tween(this.sprite.position)
             .to({ x: targetPosition.x, y: targetPosition.y }, duration)
