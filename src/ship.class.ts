@@ -32,6 +32,7 @@ export class Ship {
 
     /**
      * Provides the sprite's animated movement from its start position to the target position.
+     * Use linear easing for animation.
      *
      * @param targetPosition - target position {`x`,`y}
      * @param duration - movement duration in milliseconds
