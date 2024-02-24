@@ -79,6 +79,20 @@ export class Port {
         this.ships.push(ship);
 
         const randomDock: number = Math.floor(Math.random() * 4); // Generates a random number between 0 and 3
+        // Prepare tween to move ship to the center of the port Gate to go inside
+        const shipToGateIn: Tween<PIXI.ObservablePoint> = ship.moveTo(
+            {
+                x: this.gateTopPosition.x,
+                y: this.gateBottomPosition.y - Math.round((this.gateBottomPosition.y - this.gateTopPosition.y) / 2)
+            }
+        );
+        // Prepare tween to move ship to the center of the port Gate to go outside
+        const shipToGateOut: Tween<PIXI.ObservablePoint> = ship.moveTo(
+            {
+                x: this.gateTopPosition.x,
+                y: this.gateBottomPosition.y - Math.round((this.gateBottomPosition.y - this.gateTopPosition.y) / 2)
+            }
+        );
         // Prepare tween to move ship to the random dock
         const shipToDock: Tween<PIXI.ObservablePoint> = ship.moveTo(this.docks[randomDock].position);
         // Prepare tween to move ship outside the stage
@@ -86,12 +100,16 @@ export class Port {
 
         const delay: number = 1000;
         // Chain the tweens with a delay of 1 second between them
-        shipToDock.chain(shipToOutside);
-        shipToOutside.delay(delay).onComplete(() => {
+        shipToGateIn.chain(shipToDock);
+        shipToDock.chain(shipToGateOut);
+        shipToGateOut.chain(shipToOutside);
+
+        shipToGateOut.delay(delay);
+        shipToOutside.onComplete(() => {
             this.removeShip(ship);
         });
         // Start a tween within delay of 1 second
-        shipToDock.start(delay);
+        shipToGateIn.start();
     }
 
     /**
