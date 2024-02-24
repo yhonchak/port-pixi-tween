@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js';
 import { Dock } from './dock.class';
 import { Ship } from './ship.class';
 import { Tween } from '@tweenjs/tween.js';
+import { Position } from './types';
 
 export class Port {
     private readonly bg: number = 0x17577E;
@@ -12,6 +13,9 @@ export class Port {
     private readonly app: PIXI.Application;
     private readonly appWidth: number;
     private readonly appHeight: number;
+    private readonly gateTopPosition: Position;
+    private readonly gateBottomPosition: Position;
+
     private width: number;
     private height: number;
     private docks: Dock[];
@@ -41,6 +45,10 @@ export class Port {
         sprite.drawRect(0, 0, width, height);
         sprite.endFill();
         this.app.stage.addChild(sprite);
+
+        // Calculate Gate's positions
+        this.gateTopPosition = { x: this.width, y: Math.round(this.height / 3) };
+        this.gateBottomPosition = { x: this.width, y: Math.round(this.height - this.height / 3) };
 
         // Create docks
         for (let i: number = 0; i < 4; i++) {
