@@ -34,20 +34,17 @@ export class Ship {
      * Provides the sprite's animated movement from its start position to the target position.
      * Use linear easing for animation.
      *
-     * @param targetPosition - target position {`x`,`y}
+     * @param targetPosition - target position {`x`,`y`}
      * @param duration - movement duration in milliseconds
-     * @param startingDelay - delay in milliseconds before starting a movement
      * @returns Tween<PIXI.ObservablePoint>
      */
     moveTo(
         targetPosition: Position,
-        duration: number = 5000,
-        startingDelay: number = 1000
+        duration: number = 5000
     ): Tween<PIXI.ObservablePoint> {
         return new Tween(this.sprite.position)
             .to({ x: targetPosition.x, y: targetPosition.y }, duration)
-            .easing(TWEEN.Easing.Linear.None)
-            .start(startingDelay);
+            .easing(TWEEN.Easing.Linear.None);
     }
 }
 
