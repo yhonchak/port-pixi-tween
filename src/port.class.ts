@@ -60,13 +60,14 @@ export class Port {
         // Prepare tween to move ship outside the stage
         const shipToOutside: Tween<PIXI.ObservablePoint> = ship.moveTo({ x: this.appWidth, y: this.appHeight });
 
+        const delay: number = 1000;
         // Chain the tweens with a delay of 1 second between them
         shipToDock.chain(shipToOutside);
-        shipToOutside.delay(1000).onComplete(() => {
+        shipToOutside.delay(delay).onComplete(() => {
             this.removeShip(ship);
         });
         // Start a tween within delay of 1 second
-        shipToDock.start(1000);
+        shipToDock.start(delay);
     }
 
     /**
