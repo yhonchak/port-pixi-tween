@@ -9,13 +9,26 @@ export class Port {
     static readonly dockHeight: number = 120;
 
     private readonly app: PIXI.Application;
+    private readonly appWidth: number;
+    private readonly appHeight: number;
     private width: number;
     private height: number;
     private docks: Dock[];
     private ships: Ship[];
 
-    constructor(app: PIXI.Application, width: number, height: number) {
+    /**
+     *  The class constructor.
+     *
+     * @param app - reference to the Pixi Application
+     * @param width - the port width
+     * @param height - the port height
+     * @param appWidth - the application width
+     * @param appHeight - the application height
+     */
+    constructor(app: PIXI.Application, width: number, height: number, appWidth: number, appHeight: number) {
         this.app = app;
+        this.appWidth = appWidth;
+        this.appHeight = appHeight;
         this.width = width;
         this.height = height;
         this.docks = [];
@@ -37,7 +50,11 @@ export class Port {
         }
 
         // Create one ship
-        const ship: Ship = new Ship(this.app);
+        const ship: Ship = new Ship(this.app, this.appWidth, 0);
         this.ships.push(ship);
+
+        // Moves ship to the random dock
+        const randomDock: number = Math.floor(Math.random() * 4); // Generates a random number between 0 and 3
+        ship.moveTo(this.docks[randomDock].position);
     }
 }

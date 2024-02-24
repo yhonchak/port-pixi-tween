@@ -11,9 +11,12 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "pixi.js": "^7.4.0",
+    "@tweenjs/tween.js": "^23.1.1"
+  },
   "devDependencies": {
     "http-server": "^14.1.1",
-    "pixi.js": "^7.4.0",
     "ts-loader": "^9.5.1",
     "typescript": "^5.3.3",
     "webpack": "^5.90.3",

@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { Port } from './port.class';
 import { ICanvas } from 'pixi.js';
+import * as TWEEN from '@tweenjs/tween.js';
 
 const appWidth: number = 900;
 const appHeight: number = 600;
@@ -16,4 +17,12 @@ document.body.appendChild(app.view as unknown as Node);
 
 // Create port
 const portWidth: number = Math.round(appWidth / 3);
-const port: Port = new Port(app, portWidth, appHeight);
+const portHeight: number = appHeight;
+const port: Port = new Port(app, portWidth, portHeight, appWidth, appHeight);
+
+function animate(): void {
+    requestAnimationFrame(animate);
+    TWEEN.update();
+}
+
+animate();

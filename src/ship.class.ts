@@ -1,4 +1,7 @@
 import * as PIXI from 'pixi.js';
+import * as TWEEN from '@tweenjs/tween.js';
+import { Tween } from '@tweenjs/tween.js';
+import { Position } from './types';
 
 export class Ship {
     static readonly width: number = 90;
@@ -7,16 +10,43 @@ export class Ship {
     private app: PIXI.Application;
     private sprite: PIXI.Graphics;
 
-    constructor(app: PIXI.Application) {
+    /**
+     * The class constructor.
+     *
+     * @param app - reference to the Pixi Application
+     * @param x - the ship `x` position
+     * @param y - the ship `y` position
+     */
+    constructor(app: PIXI.Application, x: number = 0, y: number = 0) {
         this.app = app;
 
         this.sprite = new PIXI.Graphics();
         this.sprite.beginFill(0xABABAB);
         this.sprite.drawRect(0, 0, Ship.width, Ship.height);
         this.sprite.endFill();
-        this.sprite.x = 300;
-        this.sprite.y = 300;
+        this.sprite.x = x;
+        this.sprite.y = y;
 
         this.app.stage.addChild(this.sprite);
     }
+
+    /**
+     * Provides the sprite's animated movement from its start position to the target position.
+     *
+     * @param targetPosition - target position {`x`,`y}
+     * @param duration - movement duration in milliseconds
+     * @param startingDelay - delay in milliseconds before starting a movement
+     * @returns Tween<PIXI.ObservablePoint>
+     */
+    moveTo(
+        targetPosition: Position,
+        duration: number = 5000,
+        startingDelay: number = 1000
+    ): Tween<PIXI.ObservablePoint> {
+        return new Tween(this.sprite.position)
+            .to({ x: targetPosition.x, y: targetPosition.y }, duration)
+            .easing(TWEEN.Easing.Linear.None)
+            .start(startingDelay);
+    }
 }
+
