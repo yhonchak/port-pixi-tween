@@ -57,7 +57,7 @@ export class Port {
         const randomDock: number = Math.floor(Math.random() * 4); // Generates a random number between 0 and 3
         // Prepare tween to move ship to the random dock
         const shipToDock: Tween<PIXI.ObservablePoint> = ship.moveTo(this.docks[randomDock].position);
-        // Move ship outside the stage
+        // Prepare tween to move ship outside the stage
         const shipToOutside: Tween<PIXI.ObservablePoint> = ship.moveTo({ x: this.appWidth, y: this.appHeight });
 
         // Chain the tweens with a delay of 1 second between them
