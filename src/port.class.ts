@@ -98,17 +98,17 @@ export class Port {
         // Prepare tween to move ship outside the stage
         const shipToOutside: Tween<PIXI.ObservablePoint> = ship.moveTo({ x: this.appWidth, y: this.appHeight });
 
-        const delay: number = 1000;
+        const timeInterval: number = 1000;
         // Chain the tweens with a delay of 1 second between them
         shipToGateIn.chain(shipToDock);
         shipToDock.chain(shipToGateOut).onComplete(() => {
             setTimeout(() => {
                 ship.unload();
-            }, delay / 2)
+            }, timeInterval / 2)
         });
         shipToGateOut.chain(shipToOutside);
 
-        shipToGateOut.delay(delay);
+        shipToGateOut.delay(timeInterval);
         shipToOutside.onComplete(() => {
             this.removeShip(ship);
         });
