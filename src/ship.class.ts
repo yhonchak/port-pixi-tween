@@ -24,7 +24,8 @@ export class Ship {
         this.sprite = new PIXI.Graphics();
         this.sprite.x = x;
         this.sprite.y = y;
-        this.drawFullShip();
+
+        this.load();
 
         this.app.stage.addChild(this.sprite);
     }
@@ -44,6 +45,20 @@ export class Ship {
         return new Tween(this.sprite.position)
             .to({ x: targetPosition.x, y: targetPosition.y }, duration)
             .easing(TWEEN.Easing.Linear.None);
+    }
+
+    /**
+     * Loads (fill) the ship.
+     */
+    load(): void {
+        this.drawFullShip();
+    }
+
+    /**
+     * Unloads (empty) the ship.
+     */
+    unload(): void {
+        this.drawEmptyShip();
     }
 
     /**
