@@ -104,7 +104,11 @@ export class Port {
         shipToGateIn.chain(shipToDock);
         shipToDock.chain(shipToGateOut).onComplete(async () => {
             await delay(timeInterval / 2);
-            ship.unload();
+            if (ship.empty) {
+                ship.load();
+            } else {
+                ship.unload();
+            }
         });
         shipToGateOut.chain(shipToOutside);
 
