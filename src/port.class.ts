@@ -101,7 +101,11 @@ export class Port {
         const delay: number = 1000;
         // Chain the tweens with a delay of 1 second between them
         shipToGateIn.chain(shipToDock);
-        shipToDock.chain(shipToGateOut);
+        shipToDock.chain(shipToGateOut).onComplete(() => {
+            setTimeout(() => {
+                ship.unload();
+            }, delay / 2)
+        });
         shipToGateOut.chain(shipToOutside);
 
         shipToGateOut.delay(delay);
