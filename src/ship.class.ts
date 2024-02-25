@@ -59,6 +59,18 @@ export class Ship {
     }
 
     /**
+     * Draws empty ship.
+     * Clears sprite before drawing.
+     * @param thickness is a line thickness in pixels
+     * @private
+     */
+    private drawEmptyShip(thickness: number = 4): void {
+        this.sprite.clear();
+        this.sprite.lineStyle(thickness, this.color);
+        this.sprite.drawRect(0, 0, Ship.width - Math.round(thickness/2), Ship.height - Math.round(thickness/2));
+    }
+
+    /**
      * Removes the ship from the app stage.
      * Destroys the sprite object completely.
      */
