@@ -9,6 +9,7 @@ export class Ship {
 
     private app: PIXI.Application;
     private sprite: PIXI.Graphics;
+    private readonly color: number = 0xABABAB;
 
     /**
      * The class constructor.
@@ -21,11 +22,9 @@ export class Ship {
         this.app = app;
 
         this.sprite = new PIXI.Graphics();
-        this.sprite.beginFill(0xABABAB);
-        this.sprite.drawRect(0, 0, Ship.width, Ship.height);
-        this.sprite.endFill();
         this.sprite.x = x;
         this.sprite.y = y;
+        this.drawFullShip();
 
         this.app.stage.addChild(this.sprite);
     }
@@ -45,6 +44,18 @@ export class Ship {
         return new Tween(this.sprite.position)
             .to({ x: targetPosition.x, y: targetPosition.y }, duration)
             .easing(TWEEN.Easing.Linear.None);
+    }
+
+    /**
+     * Draws filled (full) ship.
+     * Clears sprite before drawing.
+     * @private
+     */
+    private drawFullShip(): void {
+        this.sprite.clear();
+        this.sprite.beginFill(this.color);
+        this.sprite.drawRect(0, 0, Ship.width, Ship.height);
+        this.sprite.endFill();
     }
 
     /**
