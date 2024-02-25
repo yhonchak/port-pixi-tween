@@ -7,4 +7,4 @@
  *
  * @param ms is a time interval in milliseconds
  */
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+export const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));

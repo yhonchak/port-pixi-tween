@@ -3,6 +3,7 @@ import { Dock } from './dock.class';
 import { Ship } from './ship.class';
 import { Tween } from '@tweenjs/tween.js';
 import { Position } from './types';
+import { delay } from './utils';
 
 export class Port {
     private readonly bg: number = 0x17577E;
@@ -101,10 +102,9 @@ export class Port {
         const timeInterval: number = 1000;
         // Chain the tweens with a delay of 1 second between them
         shipToGateIn.chain(shipToDock);
-        shipToDock.chain(shipToGateOut).onComplete(() => {
-            setTimeout(() => {
-                ship.unload();
-            }, timeInterval / 2)
+        shipToDock.chain(shipToGateOut).onComplete(async () => {
+            await delay(timeInterval / 2);
+            ship.unload();
         });
         shipToGateOut.chain(shipToOutside);
 
