@@ -10,6 +10,7 @@ export class Ship {
     private app: PIXI.Application;
     private sprite: PIXI.Graphics;
     private readonly color: number = 0xABABAB;
+    private _empty: boolean = false;
 
     /**
      * The class constructor.
@@ -25,7 +26,7 @@ export class Ship {
         this.sprite.x = x;
         this.sprite.y = y;
 
-        this.load();
+        this.unload();
 
         this.app.stage.addChild(this.sprite);
     }
@@ -51,6 +52,7 @@ export class Ship {
      * Loads (fill) the ship.
      */
     load(): void {
+        this._empty = false;
         this.drawFullShip();
     }
 
@@ -58,7 +60,15 @@ export class Ship {
      * Unloads (empty) the ship.
      */
     unload(): void {
+        this._empty = true;
         this.drawEmptyShip();
+    }
+
+    /**
+     * Returns flag whether the ship is empty.
+     */
+    get empty(): boolean {
+        return this._empty;
     }
 
     /**
