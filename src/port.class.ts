@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js';
 import { Dock } from './dock.class';
 import { Ship } from './ship.class';
 import { Tween } from '@tweenjs/tween.js';
+import { Position } from './types';
 
 export class Port {
     private readonly bg: number = 0x17577E;
@@ -12,6 +13,9 @@ export class Port {
     private readonly app: PIXI.Application;
     private readonly appWidth: number;
     private readonly appHeight: number;
+    private readonly gateTopPosition: Position;
+    private readonly gateBottomPosition: Position;
+
     private width: number;
     private height: number;
     private docks: Dock[];
@@ -42,6 +46,26 @@ export class Port {
         sprite.endFill();
         this.app.stage.addChild(sprite);
 
+        // Calculate Gate's positions
+        this.gateTopPosition = { x: this.width, y: Math.round(this.height / 3) };
+        this.gateBottomPosition = { x: this.width, y: Math.round(this.height - this.height / 3) };
+
+        // Create barriers graphics
+        const barrierWidth: number = 5;
+        const barrierColor: number = 0xEED202;
+
+        const barrierTop: PIXI.Graphics = new PIXI.Graphics();
+        barrierTop.beginFill(barrierColor);
+        barrierTop.drawRect(width - barrierWidth, 0, barrierWidth, this.gateTopPosition.y);
+        barrierTop.endFill();
+        this.app.stage.addChild(barrierTop);
+
+        const barrierBottom: PIXI.Graphics = new PIXI.Graphics();
+        barrierBottom.beginFill(barrierColor);
+        barrierBottom.drawRect(width - barrierWidth, this.gateBottomPosition.y, barrierWidth, this.height);
+        barrierBottom.endFill();
+        this.app.stage.addChild(barrierBottom);
+
         // Create docks
         for (let i: number = 0; i < 4; i++) {
             const dockX: number = 0;
@@ -55,6 +79,20 @@ export class Port {
         this.ships.push(ship);
 
         const randomDock: number = Math.floor(Math.random() * 4); // Generates a random number between 0 and 3
+        // Prepare tween to move ship to the center of the port Gate to go inside
+        const shipToGateIn: Tween<PIXI.ObservablePoint> = ship.moveTo(
+            {
+                x: this.gateTopPosition.x,
+                y: this.gateBottomPosition.y - Math.round((this.gateBottomPosition.y - this.gateTopPosition.y) / 2)
+            }
+        );
+        // Prepare tween to move ship to the center of the port Gate to go outside
+        const shipToGateOut: Tween<PIXI.ObservablePoint> = ship.moveTo(
+            {
+                x: this.gateTopPosition.x,
+                y: this.gateBottomPosition.y - Math.round((this.gateBottomPosition.y - this.gateTopPosition.y) / 2)
+            }
+        );
         // Prepare tween to move ship to the random dock
         const shipToDock: Tween<PIXI.ObservablePoint> = ship.moveTo(this.docks[randomDock].position);
         // Prepare tween to move ship outside the stage
@@ -62,12 +100,16 @@ export class Port {
 
         const delay: number = 1000;
         // Chain the tweens with a delay of 1 second between them
-        shipToDock.chain(shipToOutside);
-        shipToOutside.delay(delay).onComplete(() => {
+        shipToGateIn.chain(shipToDock);
+        shipToDock.chain(shipToGateOut);
+        shipToGateOut.chain(shipToOutside);
+
+        shipToGateOut.delay(delay);
+        shipToOutside.onComplete(() => {
             this.removeShip(ship);
         });
         // Start a tween within delay of 1 second
-        shipToDock.start(delay);
+        shipToGateIn.start();
     }
 
     /**
