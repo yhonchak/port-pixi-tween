@@ -77,10 +77,12 @@ export class Ship implements Container {
      * @private
      */
     private drawFullShip(): void {
-        this.sprite.clear();
-        this.sprite.beginFill(this.color);
-        this.sprite.drawRect(0, 0, Ship.width, Ship.height);
-        this.sprite.endFill();
+        if (!this.sprite.destroyed) {
+            this.sprite.clear();
+            this.sprite.beginFill(this.color);
+            this.sprite.drawRect(0, 0, Ship.width, Ship.height);
+            this.sprite.endFill();
+        }
     }
 
     /**
@@ -90,9 +92,11 @@ export class Ship implements Container {
      * @private
      */
     private drawEmptyShip(thickness: number = 4): void {
-        this.sprite.clear();
-        this.sprite.lineStyle(thickness, this.color);
-        this.sprite.drawRect(0, 0, Ship.width - Math.round(thickness/2), Ship.height - Math.round(thickness/2));
+        if (!this.sprite.destroyed) {
+            this.sprite.clear();
+            this.sprite.lineStyle(thickness, this.color);
+            this.sprite.drawRect(0, 0, Ship.width - Math.round(thickness/2), Ship.height - Math.round(thickness/2));
+        }
     }
 
     /**
