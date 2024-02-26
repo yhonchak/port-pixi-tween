@@ -6,6 +6,9 @@ import { Position } from './types';
 import { delay } from './utils';
 
 export class Port {
+    static readonly shipAppearanceFrequency: number = 8000; // Frequency of ships appearance: once per 8 seconds
+    static readonly shipTimeInPort: number = 5000; // Time of the ship's stay in the port
+
     private readonly bg: number = 0x17577E;
 
     static readonly dockWidth: number = 40;
@@ -72,15 +75,28 @@ export class Port {
             const dockX: number = 0;
             const dockY: number = i * (Port.dockHeight + 20) + 30; // Adjust for spacing between docks
             const dock: Dock = new Dock(this.app, dockX, dockY, Port.dockWidth, Port.dockHeight);
-            if (Math.floor(Math.random() * 2) === 0) {
-                dock.unload();
-            } else {
-                dock.load();
-            }
+            // Dock is empty by default
+            dock.unload();
 
             this.docks.push(dock);
         }
 
+        // Start the new ship travelling
+        this.startShipTravel();
+
+        setInterval(() => {
+            // Start the new ship travelling
+            this.startShipTravel();
+        }, Port.shipAppearanceFrequency);
+    }
+
+    /**
+     * Creates a new ship.
+     * Starts tweens chain to provide the ship travel.
+     * Removes ship when the travel is finished.
+     * @private
+     */
+    private startShipTravel(): void {
         // Create one ship
         const ship: Ship = new Ship(this.app, this.appWidth, 0);
         if (Math.floor(Math.random() * 2) === 0) {
@@ -89,9 +105,11 @@ export class Port {
             ship.load();
         }
 
+        // Add the new ship to the class array
         this.ships.push(ship);
 
-        const randomDock: number = Math.floor(Math.random() * 4); // Generates a random number between 0 and 3
+        // Generate a random number between 0 and 3
+        const randomDock: number = Math.floor(Math.random() * 4);
         // Prepare tween to move ship to the center of the port Gate to go inside
         const shipToGateIn: Tween<PIXI.ObservablePoint> = ship.moveTo(
             {
@@ -111,12 +129,12 @@ export class Port {
         // Prepare tween to move ship outside the stage
         const shipToOutside: Tween<PIXI.ObservablePoint> = ship.moveTo({ x: this.appWidth, y: this.appHeight });
 
-        const timeInterval: number = 1000;
         // Chain the tweens with a delay of 1 second between them
         shipToGateIn.chain(shipToDock);
         shipToDock.chain(shipToGateOut).onComplete(async () => {
-            await delay(timeInterval / 2);
+            await delay(Port.shipTimeInPort / 2);
 
+            // Unload or load the ship and the target dock depending on their state
             if (ship.empty) {
                 if (!this.docks[randomDock].empty) {
                     ship.load();
@@ -129,9 +147,8 @@ export class Port {
                 }
             }
         });
-        shipToGateOut.chain(shipToOutside);
+        shipToGateOut.delay(Port.shipTimeInPort).chain(shipToOutside);
 
-        shipToGateOut.delay(timeInterval);
         shipToOutside.onComplete(() => {
             this.removeShip(ship);
         });
