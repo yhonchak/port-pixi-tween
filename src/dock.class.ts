@@ -10,6 +10,7 @@ export class Dock implements Container {
     private height: number;
 
     private _empty: boolean = false;
+    private _open: boolean = true;
 
     /**
      * The class constructor.
@@ -66,6 +67,20 @@ export class Dock implements Container {
      */
     get empty(): boolean {
         return this._empty;
+    }
+
+    /**
+     * Returns flag whether the dock is open.
+     */
+    get open(): boolean {
+        return this._open;
+    }
+
+    /**
+     * Sets a flag whether the dock is open.
+     */
+    set open(value: boolean) {
+        this._open = value;
     }
 
     /**
