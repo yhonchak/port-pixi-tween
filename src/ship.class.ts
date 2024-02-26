@@ -1,9 +1,9 @@
 import * as PIXI from 'pixi.js';
 import * as TWEEN from '@tweenjs/tween.js';
 import { Tween } from '@tweenjs/tween.js';
-import { Position } from './types';
+import { Container, Position } from './types';
 
-export class Ship {
+export class Ship implements Container {
     static readonly width: number = 90;
     static readonly height: number = 30;
 
