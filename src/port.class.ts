@@ -7,6 +7,7 @@ import { delay } from './utils';
 
 export class Port {
     static readonly shipAppearanceFrequency: number = 8000; // Frequency of ships appearance: once per 8 seconds
+    static readonly shipTimeInPort: number = 5000; // Time of the ship's stay in the port
 
     private readonly bg: number = 0x17577E;
 
@@ -128,11 +129,10 @@ export class Port {
         // Prepare tween to move ship outside the stage
         const shipToOutside: Tween<PIXI.ObservablePoint> = ship.moveTo({ x: this.appWidth, y: this.appHeight });
 
-        const timeInterval: number = 1000;
         // Chain the tweens with a delay of 1 second between them
         shipToGateIn.chain(shipToDock);
         shipToDock.chain(shipToGateOut).onComplete(async () => {
-            await delay(timeInterval / 2);
+            await delay(Port.shipTimeInPort / 2);
 
             // Unload or load the ship and the target dock depending on their state
             if (ship.empty) {
@@ -147,9 +147,8 @@ export class Port {
                 }
             }
         });
-        shipToGateOut.chain(shipToOutside);
+        shipToGateOut.delay(Port.shipTimeInPort).chain(shipToOutside);
 
-        shipToGateOut.delay(timeInterval);
         shipToOutside.onComplete(() => {
             this.removeShip(ship);
         });
