@@ -81,6 +81,17 @@ export class Port {
             this.docks.push(dock);
         }
 
+        // Start the new ship travelling
+        this.startShipTravel();
+    }
+
+    /**
+     * Creates a new ship.
+     * Starts tweens chain to provide the ship travel.
+     * Removes ship when the travel is finished.
+     * @private
+     */
+    private startShipTravel(): void {
         // Create one ship
         const ship: Ship = new Ship(this.app, this.appWidth, 0);
         if (Math.floor(Math.random() * 2) === 0) {
@@ -89,9 +100,11 @@ export class Port {
             ship.load();
         }
 
+        // Add the new ship to the class array
         this.ships.push(ship);
 
-        const randomDock: number = Math.floor(Math.random() * 4); // Generates a random number between 0 and 3
+        // Generate a random number between 0 and 3
+        const randomDock: number = Math.floor(Math.random() * 4);
         // Prepare tween to move ship to the center of the port Gate to go inside
         const shipToGateIn: Tween<PIXI.ObservablePoint> = ship.moveTo(
             {
@@ -117,6 +130,7 @@ export class Port {
         shipToDock.chain(shipToGateOut).onComplete(async () => {
             await delay(timeInterval / 2);
 
+            // Unload or load the ship and the target dock depending on their state
             if (ship.empty) {
                 if (!this.docks[randomDock].empty) {
                     ship.load();
