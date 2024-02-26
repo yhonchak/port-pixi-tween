@@ -15,6 +15,10 @@ const app: PIXI.Application<ICanvas> = new PIXI.Application({
 });
 document.body.appendChild(app.view as unknown as Node);
 
+// TODO: remove it before deployment, because it depends on the Chrome extension
+// @ts-ignore
+globalThis.__PIXI_APP__ = app; // initialize Chrome extension for debugging PixiJS app
+
 // Create port
 const portWidth: number = Math.round(appWidth / 3);
 const portHeight: number = appHeight;

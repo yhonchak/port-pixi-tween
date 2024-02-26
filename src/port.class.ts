@@ -3,6 +3,7 @@ import { Dock } from './dock.class';
 import { Ship } from './ship.class';
 import { Tween } from '@tweenjs/tween.js';
 import { Position } from './types';
+import { delay } from './utils';
 
 export class Port {
     private readonly bg: number = 0x17577E;
@@ -71,11 +72,23 @@ export class Port {
             const dockX: number = 0;
             const dockY: number = i * (Port.dockHeight + 20) + 30; // Adjust for spacing between docks
             const dock: Dock = new Dock(this.app, dockX, dockY, Port.dockWidth, Port.dockHeight);
+            if (Math.floor(Math.random() * 2) === 0) {
+                dock.unload();
+            } else {
+                dock.load();
+            }
+
             this.docks.push(dock);
         }
 
         // Create one ship
         const ship: Ship = new Ship(this.app, this.appWidth, 0);
+        if (Math.floor(Math.random() * 2) === 0) {
+            ship.unload();
+        } else {
+            ship.load();
+        }
+
         this.ships.push(ship);
 
         const randomDock: number = Math.floor(Math.random() * 4); // Generates a random number between 0 and 3
@@ -98,13 +111,27 @@ export class Port {
         // Prepare tween to move ship outside the stage
         const shipToOutside: Tween<PIXI.ObservablePoint> = ship.moveTo({ x: this.appWidth, y: this.appHeight });
 
-        const delay: number = 1000;
+        const timeInterval: number = 1000;
         // Chain the tweens with a delay of 1 second between them
         shipToGateIn.chain(shipToDock);
-        shipToDock.chain(shipToGateOut);
+        shipToDock.chain(shipToGateOut).onComplete(async () => {
+            await delay(timeInterval / 2);
+
+            if (ship.empty) {
+                if (!this.docks[randomDock].empty) {
+                    ship.load();
+                    this.docks[randomDock].unload();
+                }
+            } else {
+                if (this.docks[randomDock].empty) {
+                    ship.unload();
+                    this.docks[randomDock].load();
+                }
+            }
+        });
         shipToGateOut.chain(shipToOutside);
 
-        shipToGateOut.delay(delay);
+        shipToGateOut.delay(timeInterval);
         shipToOutside.onComplete(() => {
             this.removeShip(ship);
         });

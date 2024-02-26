@@ -1,14 +1,16 @@
 import * as PIXI from 'pixi.js';
 import * as TWEEN from '@tweenjs/tween.js';
 import { Tween } from '@tweenjs/tween.js';
-import { Position } from './types';
+import { Container, Position } from './types';
 
-export class Ship {
+export class Ship implements Container {
     static readonly width: number = 90;
     static readonly height: number = 30;
 
     private app: PIXI.Application;
     private sprite: PIXI.Graphics;
+    private readonly color: number = 0xABABAB;
+    private _empty: boolean = false;
 
     /**
      * The class constructor.
@@ -21,11 +23,10 @@ export class Ship {
         this.app = app;
 
         this.sprite = new PIXI.Graphics();
-        this.sprite.beginFill(0xABABAB);
-        this.sprite.drawRect(0, 0, Ship.width, Ship.height);
-        this.sprite.endFill();
         this.sprite.x = x;
         this.sprite.y = y;
+
+        this.unload();
 
         this.app.stage.addChild(this.sprite);
     }
@@ -45,6 +46,53 @@ export class Ship {
         return new Tween(this.sprite.position)
             .to({ x: targetPosition.x, y: targetPosition.y }, duration)
             .easing(TWEEN.Easing.Linear.None);
+    }
+
+    /**
+     * Loads (fill) the ship.
+     */
+    load(): void {
+        this._empty = false;
+        this.drawFullShip();
+    }
+
+    /**
+     * Unloads (empty) the ship.
+     */
+    unload(): void {
+        this._empty = true;
+        this.drawEmptyShip();
+    }
+
+    /**
+     * Returns flag whether the ship is empty.
+     */
+    get empty(): boolean {
+        return this._empty;
+    }
+
+    /**
+     * Draws filled (full) ship.
+     * Clears sprite before drawing.
+     * @private
+     */
+    private drawFullShip(): void {
+        this.sprite.clear();
+        this.sprite.beginFill(this.color);
+        this.sprite.drawRect(0, 0, Ship.width, Ship.height);
+        this.sprite.endFill();
+    }
+
+    /**
+     * Draws empty ship.
+     * Clears sprite before drawing.
+     * @param thickness is a line thickness in pixels
+     * @private
+     */
+    private drawEmptyShip(thickness: number = 4): void {
+        this.sprite.clear();
+        this.sprite.lineStyle(thickness, this.color);
+        this.sprite.drawRect(0, 0, Ship.width - Math.round(thickness/2), Ship.height - Math.round(thickness/2));
     }
 
     /**
