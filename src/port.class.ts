@@ -6,6 +6,8 @@ import { Position } from './types';
 import { delay } from './utils';
 
 export class Port {
+    static readonly shipAppearanceFrequency: number = 8000; // Frequency of ships appearance: once per 8 seconds
+
     private readonly bg: number = 0x17577E;
 
     static readonly dockWidth: number = 40;
@@ -83,6 +85,11 @@ export class Port {
 
         // Start the new ship travelling
         this.startShipTravel();
+
+        setInterval(() => {
+            // Start the new ship travelling
+            this.startShipTravel();
+        }, Port.shipAppearanceFrequency);
     }
 
     /**
