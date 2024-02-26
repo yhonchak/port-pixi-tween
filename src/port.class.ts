@@ -108,8 +108,6 @@ export class Port {
         // Add the new ship to the class array
         this.ships.push(ship);
 
-        // Generate a random number between 0 and 3
-        const randomDock: number = Math.floor(Math.random() * 4);
         // Prepare tween to move ship to the center of the port Gate to go inside
         const shipToGateIn: Tween<PIXI.ObservablePoint> = ship.moveTo(
             {
@@ -117,43 +115,56 @@ export class Port {
                 y: this.gateBottomPosition.y - Math.round((this.gateBottomPosition.y - this.gateTopPosition.y) / 2)
             }
         );
-        // Prepare tween to move ship to the center of the port Gate to go outside
-        const shipToGateOut: Tween<PIXI.ObservablePoint> = ship.moveTo(
-            {
-                x: this.gateTopPosition.x,
-                y: this.gateBottomPosition.y - Math.round((this.gateBottomPosition.y - this.gateTopPosition.y) / 2)
-            }
-        );
-        // Prepare tween to move ship to the random dock
-        const shipToDock: Tween<PIXI.ObservablePoint> = ship.moveTo(this.docks[randomDock].position);
         // Prepare tween to move ship outside the stage
         const shipToOutside: Tween<PIXI.ObservablePoint> = ship.moveTo({ x: this.appWidth, y: this.appHeight });
 
-        // Chain the tweens with a delay of 1 second between them
-        shipToGateIn.chain(shipToDock);
-        shipToDock.chain(shipToGateOut).onComplete(async () => {
-            await delay(Port.shipTimeInPort / 2);
-
-            // Unload or load the ship and the target dock depending on their state
-            if (ship.empty) {
-                if (!this.docks[randomDock].empty) {
-                    ship.load();
-                    this.docks[randomDock].unload();
-                }
-            } else {
-                if (this.docks[randomDock].empty) {
-                    ship.unload();
-                    this.docks[randomDock].load();
-                }
+        // Start a tween within delay of 1 second
+        shipToGateIn.start().onComplete(() => {
+            // Find available dock
+            const availableDockIndex: number = this.docks.findIndex(
+                (dock: Dock) => dock.open
+                    && (
+                        ship.empty ? !dock.empty : !ship.empty ? dock.empty : -1
+                    )
+            );
+            if (availableDockIndex < 0) {
+                console.log('No available docks found! Ship should go to Queue!');
+                return;
             }
+
+            // Prepare tween to move ship to the random dock
+            const shipToDock: Tween<PIXI.ObservablePoint> = ship.moveTo(this.docks[availableDockIndex].position);
+            shipToDock.start().onComplete(async () => {
+                // TODO: research issue when the browser tab is inactive:
+                //  this event triggered multiple times in one moment after backing to tab
+                this.docks[availableDockIndex].open = false;
+                // Prepare tween to move ship to the center of the port Gate to go outside
+                const shipToGateOut: Tween<PIXI.ObservablePoint> = ship.moveTo(
+                    {
+                        x: this.gateTopPosition.x,
+                        y: this.gateBottomPosition.y - Math.round((this.gateBottomPosition.y - this.gateTopPosition.y) / 2)
+                    }
+                );
+                shipToGateOut.delay(Port.shipTimeInPort).start().chain(shipToOutside).onStart(() => {
+                    this.docks[availableDockIndex].open = true;
+                });
+
+                await delay(Port.shipTimeInPort / 2);
+
+                // Unload or load the ship and the target dock depending on their state
+                if (ship.empty) {
+                    ship.load();
+                    this.docks[availableDockIndex].unload();
+                } else {
+                    ship.unload();
+                    this.docks[availableDockIndex].load();
+                }
+            });
         });
-        shipToGateOut.delay(Port.shipTimeInPort).chain(shipToOutside);
 
         shipToOutside.onComplete(() => {
             this.removeShip(ship);
         });
-        // Start a tween within delay of 1 second
-        shipToGateIn.start();
     }
 
     /**
