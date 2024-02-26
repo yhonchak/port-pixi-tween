@@ -1,9 +1,11 @@
 import * as PIXI from 'pixi.js';
-import { Position } from './types';
+import { Container, Position } from './types';
 
-export class Dock {
+export class Dock implements Container {
     private app: PIXI.Application;
     private sprite: PIXI.Graphics;
+
+    private _empty: boolean = false;
 
     /**
      * The class constructor.
@@ -35,5 +37,26 @@ export class Dock {
             x: this.sprite.x,
             y: this.sprite.y
         }
+    }
+
+    /**
+     * Loads (fill) the dock.
+     */
+    load(): void {
+        this._empty = false;
+    }
+
+    /**
+     * Unloads (empty) the dock.
+     */
+    unload(): void {
+        this._empty = true;
+    }
+
+    /**
+     * Returns flag whether the dock is empty.
+     */
+    get empty(): boolean {
+        return this._empty;
     }
 }
