@@ -74,11 +74,8 @@ export class Port {
             const dockX: number = 0;
             const dockY: number = i * (Port.dockHeight + 20) + 30; // Adjust for spacing between docks
             const dock: Dock = new Dock(this.app, dockX, dockY, Port.dockWidth, Port.dockHeight);
-            if (Math.floor(Math.random() * 2) === 0) {
-                dock.unload();
-            } else {
-                dock.load();
-            }
+            // Dock is empty by default
+            dock.unload();
 
             this.docks.push(dock);
         }
