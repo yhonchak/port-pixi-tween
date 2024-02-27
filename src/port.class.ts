@@ -106,55 +106,72 @@ export class Port {
      */
     private startShipTravel(): void {
         // Create a ship
-        const ship: Ship = new Ship(this.app, this.appWidth, 0);
+        const newShip: Ship = new Ship(this.app, this.appWidth, 0);
         // Set the ship status (empty or full) randomly
         if (Math.floor(Math.random() * 2) === 0) {
-            ship.unload();
+            newShip.unload();
         } else {
-            ship.load();
+            newShip.load();
         }
 
         // Add the new ship to the class array
-        this.ships.push(ship);
+        this.ships.push(newShip);
 
-        this.moveShipToGate(ship).onComplete(() => {
-            // TODO: research issue when the browser tab is inactive:
-            //  this event triggered multiple times in one moment after backing to tab
+        const movingLoop: Function = (ship: Ship) => {
+            this.moveShipToGate(ship).onComplete(() => {
+                // TODO: research issue when the browser tab is inactive:
+                //  this event triggered multiple times in one moment after backing to tab
 
-            // Find available dock
-            const dockIndex: number = this.findAvailableDock(ship);
-            if (dockIndex < 0) {
-                this.moveShipToQueue(ship, this.emptyShipsQueue).onStart(() => {
-                    this.emptyShipsQueue.addShip(ship);
-                });
-            } else {
-                this.moveShipToDock(ship, dockIndex).onComplete(async () => {
-                    this.docks[dockIndex].open = false;
+                // TODO: determine relevant queue
+                const queue: Queue = this.emptyShipsQueue;
+                // Find available dock
+                const dockIndex: number = this.findAvailableDock(ship);
+                if (dockIndex < 0) {
+                    this.moveShipToQueue(ship, queue).onStart(() => {
+                        queue.addShip(ship);
+                    });
+                } else {
+                    this.moveShipToDock(ship, dockIndex).onComplete(async () => {
+                        this.docks[dockIndex].open = false;
 
-                    this.moveShipToGate(ship, Port.shipTimeInPort)
-                        .onStart(() => {
-                            this.docks[dockIndex].open = true;
-                        })
-                        .onComplete(() => {
-                            this.moveShipToOutside(ship)
-                                .onComplete(() => {
-                                    this.removeShip(ship);
-                                });
-                        });
+                        this.moveShipToGate(ship, Port.shipTimeInPort)
+                            .onStart(() => {
+                                this.docks[dockIndex].open = true;
+                                if (!queue.empty) {
+                                    const firstShip: Ship = queue.firstShip;
+                                    const firstShipDockIndex: number = this.findAvailableDock(firstShip);
+                                    if(firstShipDockIndex > -1) {
+                                        queue.removeFirstShip();
+                                        queue.ships.forEach((shipInQueue: Ship) => {
+                                            this.moveShipToQueue(shipInQueue, queue);
+                                        });
+                                        movingLoop(firstShip);
+                                    }
+                                }
+                            })
+                            .onComplete(() => {
+                                this.moveShipToOutside(ship)
+                                    .onComplete(() => {
+                                        this.removeShip(ship);
+                                    });
+                            });
 
-                    await delay(Port.shipTimeInPort / 2);
+                        await delay(Port.shipTimeInPort / 2);
 
-                    // Unload or load the ship and the target dock depending on their state
-                    if (ship.empty) {
-                        ship.load();
-                        this.docks[dockIndex].unload();
-                    } else {
-                        ship.unload();
-                        this.docks[dockIndex].load();
-                    }
-                });
-            }
-        });
+                        // Unload or load the ship and the target dock depending on their state
+                        if (ship.empty) {
+                            ship.load();
+                            this.docks[dockIndex].unload();
+                        } else {
+                            ship.unload();
+                            this.docks[dockIndex].load();
+                        }
+                    });
+                }
+            });
+        };
+
+        movingLoop(newShip);
     }
 
     /**

@@ -8,7 +8,7 @@ export class Queue {
     private app: PIXI.Application;
     private readonly sprite: PIXI.Graphics;
 
-    private ships: Ship[];
+    private readonly _ships: Ship[];
 
     /**
      * The class constructor.
@@ -31,7 +31,7 @@ export class Queue {
 
         this.app.stage.addChild(this.sprite);
 
-        this.ships = [];
+        this._ships = [];
     }
 
     /**
@@ -40,9 +40,16 @@ export class Queue {
      */
     get availablePosition(): Position {
         return {
-            x: this.sprite.x + this.ships.length * (Ship.width + Queue.gap),
+            x: this.sprite.x + this._ships.length * (Ship.width + Queue.gap),
             y: this.sprite.y
         }
+    }
+
+    /**
+     * Returns all ships.
+     */
+    get ships(): Ship[] {
+        return this._ships;
     }
 
     /**
@@ -50,6 +57,28 @@ export class Queue {
      * @param ship to be added
      */
     addShip(ship: Ship): void {
-        this.ships.push(ship);
+        this._ships.push(ship);
+    }
+
+    /**
+     * Returns the first ship from queue.
+     * Returns `null` if queue is empty.
+     */
+    get firstShip(): Ship {
+        return this.empty ? null : this._ships[0];
+    }
+
+    /**
+     * Removes the first ship from the queue.
+     */
+    removeFirstShip(): void {
+        this._ships.shift();
+    }
+
+    /**
+     * Checks whether the queue is empty.
+     */
+    get empty(): boolean {
+        return this._ships.length === 0;
     }
 }
