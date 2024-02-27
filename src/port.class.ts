@@ -97,8 +97,9 @@ export class Port {
      * @private
      */
     private startShipTravel(): void {
-        // Create one ship
+        // Create a ship
         const ship: Ship = new Ship(this.app, this.appWidth, 0);
+        // Set the ship status (empty or full) randomly
         if (Math.floor(Math.random() * 2) === 0) {
             ship.unload();
         } else {
@@ -108,63 +109,99 @@ export class Port {
         // Add the new ship to the class array
         this.ships.push(ship);
 
-        // Prepare tween to move ship to the center of the port Gate to go inside
-        const shipToGateIn: Tween<PIXI.ObservablePoint> = ship.moveTo(
-            {
-                x: this.gateTopPosition.x,
-                y: this.gateBottomPosition.y - Math.round((this.gateBottomPosition.y - this.gateTopPosition.y) / 2)
-            }
-        );
-        // Prepare tween to move ship outside the stage
-        const shipToOutside: Tween<PIXI.ObservablePoint> = ship.moveTo({ x: this.appWidth, y: this.appHeight });
-
-        // Start a tween within delay of 1 second
-        shipToGateIn.start().onComplete(() => {
+        this.moveShipToGate(ship).onComplete(() => {
             // Find available dock
-            const availableDockIndex: number = this.docks.findIndex(
-                (dock: Dock) => dock.open
-                    && (
-                        ship.empty ? !dock.empty : !ship.empty ? dock.empty : -1
-                    )
-            );
-            if (availableDockIndex < 0) {
+            const dockIndex: number = this.findAvailableDock(ship);
+            if (dockIndex < 0) {
                 console.log('No available docks found! Ship should go to Queue!');
                 return;
             }
 
-            // Prepare tween to move ship to the random dock
-            const shipToDock: Tween<PIXI.ObservablePoint> = ship.moveTo(this.docks[availableDockIndex].position);
-            shipToDock.start().onComplete(async () => {
+            this.moveShipToDock(ship, dockIndex).onComplete(async () => {
                 // TODO: research issue when the browser tab is inactive:
                 //  this event triggered multiple times in one moment after backing to tab
-                this.docks[availableDockIndex].open = false;
-                // Prepare tween to move ship to the center of the port Gate to go outside
-                const shipToGateOut: Tween<PIXI.ObservablePoint> = ship.moveTo(
-                    {
-                        x: this.gateTopPosition.x,
-                        y: this.gateBottomPosition.y - Math.round((this.gateBottomPosition.y - this.gateTopPosition.y) / 2)
-                    }
-                );
-                shipToGateOut.delay(Port.shipTimeInPort).start().chain(shipToOutside).onStart(() => {
-                    this.docks[availableDockIndex].open = true;
-                });
+                this.docks[dockIndex].open = false;
+
+                this.moveShipToGate(ship, Port.shipTimeInPort)
+                    .onStart(() => {
+                        this.docks[dockIndex].open = true;
+                    })
+                    .onComplete(() => {
+                        this.moveShipToOutside(ship)
+                            .onComplete(() => {
+                                this.removeShip(ship);
+                            });
+                    });
 
                 await delay(Port.shipTimeInPort / 2);
 
                 // Unload or load the ship and the target dock depending on their state
                 if (ship.empty) {
                     ship.load();
-                    this.docks[availableDockIndex].unload();
+                    this.docks[dockIndex].unload();
                 } else {
                     ship.unload();
-                    this.docks[availableDockIndex].load();
+                    this.docks[dockIndex].load();
                 }
             });
         });
+    }
 
-        shipToOutside.onComplete(() => {
-            this.removeShip(ship);
-        });
+    /**
+     * Finds available dock for specified ship.
+     * Returns dock index, or -1 if there are no docks available at the moment.
+     *
+     * @param ship for which to find an available dock
+     * @private
+     * @returns number
+     */
+    private findAvailableDock(ship: Ship): number {
+        return this.docks.findIndex(
+            (dock: Dock) => dock.open
+                && (
+                    ship.empty ? !dock.empty : !ship.empty ? dock.empty : -1
+                )
+        );
+    }
+
+    /**
+     * Starts a tween to move ship to the center of the port Gate.
+     *
+     * @param ship is a reference to ship instance
+     * @param delay - delay before start in milliseconds
+     * @private
+     * @returns Tween<PIXI.ObservablePoint>
+     */
+    private moveShipToGate(ship: Ship, delay: number = 0): Tween<PIXI.ObservablePoint> {
+        return ship.moveTo(
+            {
+                x: this.gateTopPosition.x,
+                y: this.gateBottomPosition.y - Math.round((this.gateBottomPosition.y - this.gateTopPosition.y) / 2)
+            }
+        ).delay(delay).start();
+    }
+
+    /**
+     * Starts a tween to move ship to the specified dock.
+     *
+     * @param ship is a reference to ship instance
+     * @param dockIndex is a dock index in docks array
+     * @private
+     * @returns Tween<PIXI.ObservablePoint>
+     */
+    private moveShipToDock(ship: Ship, dockIndex: number): Tween<PIXI.ObservablePoint> {
+        return ship.moveTo(this.docks[dockIndex].position).start();
+    }
+
+    /**
+     * Starts a tween to move ship outside of scene.
+     *
+     * @param ship is a reference to ship instance
+     * @private
+     * @returns Tween<PIXI.ObservablePoint>
+     */
+    private moveShipToOutside(ship: Ship): Tween<PIXI.ObservablePoint> {
+        return ship.moveTo({ x: this.appWidth, y: this.appHeight }).start();
     }
 
     /**
