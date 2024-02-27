@@ -125,7 +125,7 @@ export class Port {
             const dockIndex: number = this.findAvailableDock(ship);
             if (dockIndex < 0) {
                 this.moveShipToQueue(ship, this.emptyShipsQueue).onStart(() => {
-                    this.emptyShipsQueue.increaseLength(Ship.width)
+                    this.emptyShipsQueue.addShip(ship);
                 });
             } else {
                 this.moveShipToDock(ship, dockIndex).onComplete(async () => {

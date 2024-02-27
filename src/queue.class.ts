@@ -8,7 +8,6 @@ export class Queue {
     private app: PIXI.Application;
     private readonly sprite: PIXI.Graphics;
 
-    private length: number = 0;
     private ships: Ship[];
 
     /**
@@ -44,22 +43,6 @@ export class Queue {
             x: this.sprite.x + this.ships.length * (Ship.width + Queue.gap),
             y: this.sprite.y
         }
-    }
-
-    /**
-     * Increases the queue line width.
-     * @param length to increase
-     */
-    increaseLength(length: number): void {
-        this.length += length + Queue.gap;
-    }
-
-    /**
-     * Decreases the queue line width.
-     * @param length to increase
-     */
-    decreaseLength(length: number): void {
-        this.length -= length + Queue.gap;
     }
 
     /**
