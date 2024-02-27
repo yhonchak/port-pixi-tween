@@ -59,8 +59,8 @@ export class Port {
         this.gateBottomPosition = { x: this.width, y: Math.round(this.height - this.height / 3) };
 
         // Create the queue lines
-        this.emptyShipsQueue = new Queue(this.app, this.gateTopPosition.x + 20, this.gateTopPosition.y - 20);
-        this.fullShipsQueue = new Queue(this.app, this.gateBottomPosition.x + 20, this.gateBottomPosition.y + 20);
+        this.emptyShipsQueue = new Queue(this.app, this.gateTopPosition.x + 20, this.gateTopPosition.y);
+        this.fullShipsQueue = new Queue(this.app, this.gateBottomPosition.x + 20, this.gateBottomPosition.y);
 
         // Create barriers graphics
         const barrierWidth: number = 5;
