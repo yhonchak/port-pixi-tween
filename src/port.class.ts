@@ -127,9 +127,8 @@ export class Port {
                 // Find available dock
                 const dockIndex: number = this.findAvailableDock(ship);
                 if (dockIndex < 0) {
-                    this.moveShipToQueue(ship, queue).onStart(() => {
-                        queue.addShip(ship);
-                    });
+                    queue.addShip(ship);
+                    this.moveShipToQueue(ship, queue);
                 } else {
                     this.moveShipToDock(ship, dockIndex).onComplete(async () => {
                         this.docks[dockIndex].open = false;
@@ -229,7 +228,7 @@ export class Port {
      * @returns Tween<PIXI.ObservablePoint>
      */
     private moveShipToQueue(ship: Ship, queue: Queue): Tween<PIXI.ObservablePoint> {
-        return ship.moveToTween(queue.availablePosition, 1000).start();
+        return ship.moveToTween(queue.availablePosition(ship), 1000).start();
     }
 
     /**

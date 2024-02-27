@@ -36,11 +36,12 @@ export class Queue {
 
     /**
      * Returns available position in the queue.
+     * @param ship for calculating its position
      * @returns Position.
      */
-    get availablePosition(): Position {
+    availablePosition(ship: Ship): Position {
         return {
-            x: this.sprite.x + this._ships.length * (Ship.width + Queue.gap),
+            x: this.sprite.x + this._ships.indexOf(ship) * (Ship.width + Queue.gap),
             y: this.sprite.y
         }
     }
