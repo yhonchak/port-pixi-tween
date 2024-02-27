@@ -4,7 +4,7 @@ import { Tween } from '@tweenjs/tween.js';
 import { Container, Position } from './types';
 
 export class Ship implements Container {
-    static readonly width: number = 90;
+    static readonly width: number = 75;
     static readonly height: number = 30;
 
     private app: PIXI.Application;
