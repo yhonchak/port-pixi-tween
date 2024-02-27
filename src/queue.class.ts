@@ -21,11 +21,6 @@ export class Queue {
         this.app = app;
 
         this.sprite = new PIXI.Graphics();
-        // temporary graphics
-        this.sprite.beginFill(0x000000);
-        this.sprite.drawRect(0, 0, 25, 25);
-        this.sprite.endFill();
-
         this.sprite.x = x;
         this.sprite.y = y;
 
