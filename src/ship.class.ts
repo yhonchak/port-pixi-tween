@@ -39,7 +39,7 @@ export class Ship implements Container {
      * @param duration - movement duration in milliseconds
      * @returns Tween<PIXI.ObservablePoint>
      */
-    moveTo(
+    moveToTween(
         targetPosition: Position,
         duration: number = 4000
     ): Tween<PIXI.ObservablePoint> {

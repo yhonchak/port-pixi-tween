@@ -173,7 +173,7 @@ export class Port {
      * @returns Tween<PIXI.ObservablePoint>
      */
     private moveShipToGate(ship: Ship, delay: number = 0): Tween<PIXI.ObservablePoint> {
-        return ship.moveTo(
+        return ship.moveToTween(
             {
                 x: this.gateTopPosition.x,
                 y: this.gateBottomPosition.y - Math.round((this.gateBottomPosition.y - this.gateTopPosition.y) / 2)
@@ -190,7 +190,7 @@ export class Port {
      * @returns Tween<PIXI.ObservablePoint>
      */
     private moveShipToDock(ship: Ship, dockIndex: number): Tween<PIXI.ObservablePoint> {
-        return ship.moveTo(this.docks[dockIndex].position).start();
+        return ship.moveToTween(this.docks[dockIndex].position).start();
     }
 
     /**
@@ -201,7 +201,7 @@ export class Port {
      * @returns Tween<PIXI.ObservablePoint>
      */
     private moveShipToOutside(ship: Ship): Tween<PIXI.ObservablePoint> {
-        return ship.moveTo({ x: this.appWidth, y: this.appHeight }).start();
+        return ship.moveToTween({ x: this.appWidth, y: this.appHeight }).start();
     }
 
     /**
