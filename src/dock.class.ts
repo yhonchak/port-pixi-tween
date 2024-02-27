@@ -36,13 +36,13 @@ export class Dock implements Container {
     }
 
     /**
-     * Returns the dock position.
+     * Returns the dock parking position.
      * @returns Position.
      */
-    get position(): Position {
+    get parkingPosition(): Position {
         return {
-            x: this.sprite.x,
-            y: this.sprite.y
+            x: this.sprite.x + this.width,
+            y: this.sprite.y + this.height / 2
         }
     }
 

@@ -222,7 +222,7 @@ export class Port {
      * @returns Tween<PIXI.ObservablePoint>
      */
     private moveShipToDock(ship: Ship, dockIndex: number): Tween<PIXI.ObservablePoint> {
-        return ship.moveToTween(this.docks[dockIndex].position).start();
+        return ship.moveToTween(this.docks[dockIndex].parkingPosition).start();
     }
 
     /**
