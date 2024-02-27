@@ -124,7 +124,9 @@ export class Port {
             // Find available dock
             const dockIndex: number = this.findAvailableDock(ship);
             if (dockIndex < 0) {
-                this.moveShipToQueue(ship, this.emptyShipsQueue);
+                this.moveShipToQueue(ship, this.emptyShipsQueue).onStart(() => {
+                    this.emptyShipsQueue.increaseLength(Ship.width)
+                });
             } else {
                 this.moveShipToDock(ship, dockIndex).onComplete(async () => {
                     this.docks[dockIndex].open = false;
