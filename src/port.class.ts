@@ -124,35 +124,34 @@ export class Port {
             // Find available dock
             const dockIndex: number = this.findAvailableDock(ship);
             if (dockIndex < 0) {
-                console.log('No available docks found! Ship should go to Queue!');
-                return;
+                this.moveShipToQueue(ship, this.emptyShipsQueue);
+            } else {
+                this.moveShipToDock(ship, dockIndex).onComplete(async () => {
+                    this.docks[dockIndex].open = false;
+
+                    this.moveShipToGate(ship, Port.shipTimeInPort)
+                        .onStart(() => {
+                            this.docks[dockIndex].open = true;
+                        })
+                        .onComplete(() => {
+                            this.moveShipToOutside(ship)
+                                .onComplete(() => {
+                                    this.removeShip(ship);
+                                });
+                        });
+
+                    await delay(Port.shipTimeInPort / 2);
+
+                    // Unload or load the ship and the target dock depending on their state
+                    if (ship.empty) {
+                        ship.load();
+                        this.docks[dockIndex].unload();
+                    } else {
+                        ship.unload();
+                        this.docks[dockIndex].load();
+                    }
+                });
             }
-
-            this.moveShipToDock(ship, dockIndex).onComplete(async () => {
-                this.docks[dockIndex].open = false;
-
-                this.moveShipToGate(ship, Port.shipTimeInPort)
-                    .onStart(() => {
-                        this.docks[dockIndex].open = true;
-                    })
-                    .onComplete(() => {
-                        this.moveShipToOutside(ship)
-                            .onComplete(() => {
-                                this.removeShip(ship);
-                            });
-                    });
-
-                await delay(Port.shipTimeInPort / 2);
-
-                // Unload or load the ship and the target dock depending on their state
-                if (ship.empty) {
-                    ship.load();
-                    this.docks[dockIndex].unload();
-                } else {
-                    ship.unload();
-                    this.docks[dockIndex].load();
-                }
-            });
         });
     }
 
@@ -200,6 +199,18 @@ export class Port {
      */
     private moveShipToDock(ship: Ship, dockIndex: number): Tween<PIXI.ObservablePoint> {
         return ship.moveToTween(this.docks[dockIndex].position).start();
+    }
+
+    /**
+     * Starts a tween to move ship to the queue line.
+     *
+     * @param ship is a reference to ship instance
+     * @param queue is a reference queue instance
+     * @private
+     * @returns Tween<PIXI.ObservablePoint>
+     */
+    private moveShipToQueue(ship: Ship, queue: Queue): Tween<PIXI.ObservablePoint> {
+        return ship.moveToTween(queue.availablePosition, 1000).start();
     }
 
     /**
