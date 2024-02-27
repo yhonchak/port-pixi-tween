@@ -4,6 +4,7 @@ import { Ship } from './ship.class';
 import { Tween } from '@tweenjs/tween.js';
 import { Position } from './types';
 import { delay } from './utils';
+import { Queue } from './queue.class';
 
 export class Port {
     static readonly shipAppearanceFrequency: number = 8000; // Frequency of ships appearance: once per 8 seconds
@@ -19,6 +20,9 @@ export class Port {
     private readonly appHeight: number;
     private readonly gateTopPosition: Position;
     private readonly gateBottomPosition: Position;
+
+    private readonly emptyShipsQueue: Queue;
+    private readonly fullShipsQueue: Queue;
 
     private width: number;
     private height: number;
@@ -53,6 +57,10 @@ export class Port {
         // Calculate Gate's positions
         this.gateTopPosition = { x: this.width, y: Math.round(this.height / 3) };
         this.gateBottomPosition = { x: this.width, y: Math.round(this.height - this.height / 3) };
+
+        // Create the queue lines
+        this.emptyShipsQueue = new Queue(this.app, this.gateTopPosition.x + 20, this.gateTopPosition.y - 20);
+        this.fullShipsQueue = new Queue(this.app, this.gateBottomPosition.x + 20, this.gateBottomPosition.y + 20);
 
         // Create barriers graphics
         const barrierWidth: number = 5;
