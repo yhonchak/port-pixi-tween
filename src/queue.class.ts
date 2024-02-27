@@ -2,9 +2,12 @@ import * as PIXI from 'pixi.js';
 import { Position } from './types';
 
 export class Queue {
+    static gap: number = 10;
 
     private app: PIXI.Application;
     private readonly sprite: PIXI.Graphics;
+
+    private length: number = 0;
 
     /**
      * The class constructor.
@@ -34,8 +37,24 @@ export class Queue {
      */
     get availablePosition(): Position {
         return {
-            x: this.sprite.x,
+            x: this.sprite.x + this.length,
             y: this.sprite.y
         }
+    }
+
+    /**
+     * Increases the queue line width.
+     * @param length to increase
+     */
+    increaseLength(length: number): void {
+        this.length += length + Queue.gap;
+    }
+
+    /**
+     * Decreases the queue line width.
+     * @param length to increase
+     */
+    decreaseLength(length: number): void {
+        this.length -= length + Queue.gap;
     }
 }
