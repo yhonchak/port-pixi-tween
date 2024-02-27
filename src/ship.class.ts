@@ -16,8 +16,9 @@ export class Ship implements Container {
     private app: PIXI.Application;
     private readonly sprite: PIXI.Graphics;
     private readonly color: number = 0xABABAB;
+    private readonly type: ShipType;
+
     private _empty: boolean = false;
-    private type: ShipType = ShipTypeOptions.empty;
 
     /**
      * The class constructor.
@@ -25,9 +26,19 @@ export class Ship implements Container {
      * @param app - reference to the Pixi Application
      * @param x - the ship `x` position
      * @param y - the ship `y` position
+     * @param type - the ship type
+     * @param color - the ship color
      */
-    constructor(app: PIXI.Application, x: number = 0, y: number = 0) {
+    constructor(
+        app: PIXI.Application,
+        x: number = 0,
+        y: number = 0,
+        type: ShipType = ShipTypeOptions.empty,
+        color: number = 0xABABAB
+    ) {
         this.app = app;
+        this.type = type;
+        this.color = color;
 
         this.sprite = new PIXI.Graphics();
         this.sprite.pivot.set(0, Ship.height / 2);
