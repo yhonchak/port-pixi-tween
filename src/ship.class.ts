@@ -13,7 +13,7 @@ export class Ship implements Container {
     static readonly width: number = 75;
     static readonly height: number = 30;
     static readonly tweenLongDuration: number = 5000; // one tween movement long duration in milliseconds
-    static readonly tweenMiddleDuration: number = 3000; // one tween movement middle duration in milliseconds
+    static readonly tweenMiddleDuration: number = 4000; // one tween movement middle duration in milliseconds
     static readonly tweenShortDuration: number = 1000; // one tween movement short duration in milliseconds
 
     private app: PIXI.Application;
