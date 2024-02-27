@@ -3,6 +3,12 @@ import * as TWEEN from '@tweenjs/tween.js';
 import { Tween } from '@tweenjs/tween.js';
 import { Container, Position } from './types';
 
+export enum ShipTypeOptions {
+    empty = 'empty',
+    full = 'full'
+}
+export type ShipType = ShipTypeOptions.empty | ShipTypeOptions.full;
+
 export class Ship implements Container {
     static readonly width: number = 75;
     static readonly height: number = 30;
@@ -11,6 +17,7 @@ export class Ship implements Container {
     private readonly sprite: PIXI.Graphics;
     private readonly color: number = 0xABABAB;
     private _empty: boolean = false;
+    private type: ShipType = ShipTypeOptions.empty;
 
     /**
      * The class constructor.
@@ -27,7 +34,11 @@ export class Ship implements Container {
         this.sprite.x = x;
         this.sprite.y = y;
 
-        this.unload();
+        if (this.type === ShipTypeOptions.empty) {
+            this.unload();
+        } else {
+            this.load();
+        }
 
         this.app.stage.addChild(this.sprite);
     }
