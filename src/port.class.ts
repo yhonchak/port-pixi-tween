@@ -27,7 +27,6 @@ export class Port {
     private readonly width: number;
     private readonly height: number;
     private docks: Dock[];
-    private ships: Ship[];
 
     /**
      *  The class constructor.
@@ -45,7 +44,6 @@ export class Port {
         this.width = width;
         this.height = height;
         this.docks = [];
-        this.ships = [];
 
         // Create port graphics
         const sprite: PIXI.Graphics = new PIXI.Graphics();
@@ -113,9 +111,6 @@ export class Port {
         } else {
             newShip.load();
         }
-
-        // Add the new ship to the class array
-        this.ships.push(newShip);
 
         const movingLoop: Function = (ship: Ship, fromQueue: boolean = false) => {
             this.moveShipToGate(ship, 0, fromQueue ? 1000 : 4000).onComplete(() => {
