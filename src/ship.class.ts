@@ -23,6 +23,7 @@ export class Ship implements Container {
         this.app = app;
 
         this.sprite = new PIXI.Graphics();
+        this.sprite.pivot.set(0, Ship.height / 2);
         this.sprite.x = x;
         this.sprite.y = y;
 
