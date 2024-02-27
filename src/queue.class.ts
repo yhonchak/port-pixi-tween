@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+import { Position } from './types';
 
 export class Queue {
 
@@ -25,5 +26,16 @@ export class Queue {
         this.sprite.y = y;
 
         this.app.stage.addChild(this.sprite);
+    }
+
+    /**
+     * Returns available position in the queue.
+     * @returns Position.
+     */
+    get availablePosition(): Position {
+        return {
+            x: this.sprite.x,
+            y: this.sprite.y
+        }
     }
 }
