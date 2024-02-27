@@ -12,6 +12,8 @@ export type ShipType = ShipTypeOptions.empty | ShipTypeOptions.full;
 export class Ship implements Container {
     static readonly width: number = 75;
     static readonly height: number = 30;
+    static readonly tweenLongDuration: number = 4000; // one tween movement long duration in milliseconds
+    static readonly tweenShortDuration: number = 1000; // one tween movement short duration in milliseconds
 
     private app: PIXI.Application;
     private readonly sprite: PIXI.Graphics;
@@ -64,7 +66,7 @@ export class Ship implements Container {
      */
     moveToTween(
         targetPosition: Position,
-        duration: number = 4000
+        duration: number = Ship.tweenLongDuration
     ): Tween<PIXI.ObservablePoint> {
         return new Tween(this.sprite.position)
             .to({ x: targetPosition.x, y: targetPosition.y }, duration)

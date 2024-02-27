@@ -115,61 +115,62 @@ export class Port {
         }
 
         const movingLoop: Function = (ship: Ship, fromQueue: boolean = false) => {
-            this.moveShipToGate(ship, 0, fromQueue ? 1000 : 4000).onComplete(() => {
-                // TODO: research issue when the browser tab is inactive:
-                //  this event triggered multiple times in one moment after backing to tab
+            this.moveShipToGate(ship, 0, fromQueue ? Ship.tweenShortDuration : Ship.tweenLongDuration)
+                .onComplete(() => {
+                    // TODO: research issue when the browser tab is inactive:
+                    //  this event triggered multiple times in one moment after backing to tab
 
-                // Choose corresponding queue
-                const queue: Queue = ship.empty ? this.emptyShipsQueue : this.fullShipsQueue;
-                // Find available dock
-                const dockIndex: number = this.findAvailableDock(ship);
-                if (dockIndex < 0) {
-                    queue.addShip(ship);
-                    this.moveShipToQueue(ship, queue);
-                } else {
-                    this.moveShipToDock(ship, dockIndex)
-                        .onStart(() => {
-                            this.docks[dockIndex].open = false;
-                        })
-                        .onComplete(async () => {
-                            this.moveShipToGate(ship, Port.shipTimeInPort)
-                                .onStart(() => {
-                                    this.docks[dockIndex].open = true;
-                                    // Choose corresponding queue
-                                    const queue: Queue = ship.empty ? this.emptyShipsQueue : this.fullShipsQueue;
-                                    if (!queue.empty) {
-                                        const firstShip: Ship = queue.firstShip;
-                                        const firstShipDockIndex: number = this.findAvailableDock(firstShip);
-                                        if(firstShipDockIndex > -1) {
-                                            queue.removeFirstShip();
-                                            queue.ships.forEach((shipInQueue: Ship) => {
-                                                this.moveShipToQueue(shipInQueue, queue);
-                                            });
-                                            // use recursion to provide the moving loop
-                                            movingLoop(firstShip, true);
+                    // Choose corresponding queue
+                    const queue: Queue = ship.empty ? this.emptyShipsQueue : this.fullShipsQueue;
+                    // Find available dock
+                    const dockIndex: number = this.findAvailableDock(ship);
+                    if (dockIndex < 0) {
+                        queue.addShip(ship);
+                        this.moveShipToQueue(ship, queue);
+                    } else {
+                        this.moveShipToDock(ship, dockIndex)
+                            .onStart(() => {
+                                this.docks[dockIndex].open = false;
+                            })
+                            .onComplete(async () => {
+                                this.moveShipToGate(ship, Port.shipTimeInPort)
+                                    .onStart(() => {
+                                        this.docks[dockIndex].open = true;
+                                        // Choose corresponding queue
+                                        const queue: Queue = ship.empty ? this.emptyShipsQueue : this.fullShipsQueue;
+                                        if (!queue.empty) {
+                                            const firstShip: Ship = queue.firstShip;
+                                            const firstShipDockIndex: number = this.findAvailableDock(firstShip);
+                                            if(firstShipDockIndex > -1) {
+                                                queue.removeFirstShip();
+                                                queue.ships.forEach((shipInQueue: Ship) => {
+                                                    this.moveShipToQueue(shipInQueue, queue);
+                                                });
+                                                // use recursion to provide the moving loop
+                                                movingLoop(firstShip, true);
+                                            }
                                         }
-                                    }
-                                })
-                                .onComplete(() => {
-                                    this.moveShipToOutside(ship)
-                                        .onComplete(() => {
-                                            this.removeShip(ship);
-                                        });
-                                });
+                                    })
+                                    .onComplete(() => {
+                                        this.moveShipToOutside(ship)
+                                            .onComplete(() => {
+                                                this.removeShip(ship);
+                                            });
+                                    });
 
-                            await delay(Port.shipTimeInPort / 2);
+                                await delay(Port.shipTimeInPort / 2);
 
-                            // Unload or load the ship and the target dock depending on their state
-                            if (ship.empty) {
-                                ship.load();
-                                this.docks[dockIndex].unload();
-                            } else {
-                                ship.unload();
-                                this.docks[dockIndex].load();
-                            }
-                        });
-                }
-            });
+                                // Unload or load the ship and the target dock depending on their state
+                                if (ship.empty) {
+                                    ship.load();
+                                    this.docks[dockIndex].unload();
+                                } else {
+                                    ship.unload();
+                                    this.docks[dockIndex].load();
+                                }
+                            });
+                    }
+                });
         };
 
         movingLoop(newShip);
@@ -201,7 +202,11 @@ export class Port {
      * @private
      * @returns Tween<PIXI.ObservablePoint>
      */
-    private moveShipToGate(ship: Ship, delay: number = 0, duration: number = 4000): Tween<PIXI.ObservablePoint> {
+    private moveShipToGate(
+        ship: Ship,
+        delay: number = 0,
+        duration: number = Ship.tweenLongDuration
+    ): Tween<PIXI.ObservablePoint> {
         return ship.moveToTween(
             {
                 x: this.gateTopPosition.x,
@@ -232,7 +237,7 @@ export class Port {
      * @returns Tween<PIXI.ObservablePoint>
      */
     private moveShipToQueue(ship: Ship, queue: Queue): Tween<PIXI.ObservablePoint> {
-        return ship.moveToTween(queue.availablePosition(ship), 1000).start();
+        return ship.moveToTween(queue.availablePosition(ship), Ship.tweenShortDuration).start();
     }
 
     /**
