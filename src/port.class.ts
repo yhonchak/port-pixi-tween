@@ -130,42 +130,44 @@ export class Port {
                     queue.addShip(ship);
                     this.moveShipToQueue(ship, queue);
                 } else {
-                    this.moveShipToDock(ship, dockIndex).onComplete(async () => {
-                        this.docks[dockIndex].open = false;
-
-                        this.moveShipToGate(ship, Port.shipTimeInPort)
-                            .onStart(() => {
-                                this.docks[dockIndex].open = true;
-                                if (!queue.empty) {
-                                    const firstShip: Ship = queue.firstShip;
-                                    const firstShipDockIndex: number = this.findAvailableDock(firstShip);
-                                    if(firstShipDockIndex > -1) {
-                                        queue.removeFirstShip();
-                                        queue.ships.forEach((shipInQueue: Ship) => {
-                                            this.moveShipToQueue(shipInQueue, queue);
-                                        });
-                                        movingLoop(firstShip, true);
+                    this.moveShipToDock(ship, dockIndex)
+                        .onStart(() => {
+                            this.docks[dockIndex].open = false;
+                        })
+                        .onComplete(async () => {
+                            this.moveShipToGate(ship, Port.shipTimeInPort)
+                                .onStart(() => {
+                                    this.docks[dockIndex].open = true;
+                                    if (!queue.empty) {
+                                        const firstShip: Ship = queue.firstShip;
+                                        const firstShipDockIndex: number = this.findAvailableDock(firstShip);
+                                        if(firstShipDockIndex > -1) {
+                                            queue.removeFirstShip();
+                                            queue.ships.forEach((shipInQueue: Ship) => {
+                                                this.moveShipToQueue(shipInQueue, queue);
+                                            });
+                                            movingLoop(firstShip, true);
+                                        }
                                     }
-                                }
-                            })
-                            .onComplete(() => {
-                                this.moveShipToOutside(ship)
-                                    .onComplete(() => {
-                                        this.removeShip(ship);
-                                    });
-                            });
+                                })
+                                .onComplete(() => {
+                                    this.moveShipToOutside(ship)
+                                        .onComplete(() => {
+                                            this.removeShip(ship);
+                                        });
+                                });
 
-                        await delay(Port.shipTimeInPort / 2);
+                            await delay(Port.shipTimeInPort / 2);
 
-                        // Unload or load the ship and the target dock depending on their state
-                        if (ship.empty) {
-                            ship.load();
-                            this.docks[dockIndex].unload();
-                        } else {
-                            ship.unload();
-                            this.docks[dockIndex].load();
-                        }
-                    });
+                            // Unload or load the ship and the target dock depending on their state
+                            if (ship.empty) {
+                                ship.load();
+                                this.docks[dockIndex].unload();
+                            } else {
+                                ship.unload();
+                                this.docks[dockIndex].load();
+                            }
+                        });
                 }
             });
         };
