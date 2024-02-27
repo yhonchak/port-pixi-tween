@@ -110,6 +110,9 @@ export class Port {
         this.ships.push(ship);
 
         this.moveShipToGate(ship).onComplete(() => {
+            // TODO: research issue when the browser tab is inactive:
+            //  this event triggered multiple times in one moment after backing to tab
+
             // Find available dock
             const dockIndex: number = this.findAvailableDock(ship);
             if (dockIndex < 0) {
@@ -118,8 +121,6 @@ export class Port {
             }
 
             this.moveShipToDock(ship, dockIndex).onComplete(async () => {
-                // TODO: research issue when the browser tab is inactive:
-                //  this event triggered multiple times in one moment after backing to tab
                 this.docks[dockIndex].open = false;
 
                 this.moveShipToGate(ship, Port.shipTimeInPort)
