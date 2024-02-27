@@ -5,6 +5,8 @@ import { Tween } from '@tweenjs/tween.js';
 import { Position } from './types';
 import { delay } from './utils';
 import { Queue } from './queue.class';
+import { ShipEmpty } from './ship.empty.class';
+import { ShipFull } from './ship.full.class';
 
 export class Port {
     static readonly shipAppearanceFrequency: number = 8000; // Frequency of ships appearance: once per 8 seconds
@@ -103,13 +105,12 @@ export class Port {
      * @private
      */
     private startShipTravel(): void {
-        // Create a ship
-        const newShip: Ship = new Ship(this.app, this.appWidth, this.gateTopPosition.y);
-        // Set the ship status (empty or full) randomly
+        let newShip: Ship;
+        // Create a ship of random type (empty or full)
         if (Math.floor(Math.random() * 2) === 0) {
-            newShip.unload();
+            newShip = new ShipEmpty(this.app, this.appWidth, this.gateTopPosition.y);
         } else {
-            newShip.load();
+            newShip = new ShipFull(this.app, this.appWidth, this.gateTopPosition.y);
         }
 
         const movingLoop: Function = (ship: Ship, fromQueue: boolean = false) => {
