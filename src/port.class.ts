@@ -107,8 +107,7 @@ export class Port {
     private startShipTravel(): void {
         let newShip: Ship;
         // Create a ship of random type (empty or full)
-        //  as all docks are empty from start, full ships will be generated a little bit oftener
-        if (Math.random() < 0.48) {
+        if (Math.random() < 0.5) {
             newShip = new ShipEmpty(this.app, this.appWidth, this.gateTopPosition.y);
         } else {
             newShip = new ShipFull(this.app, this.appWidth, this.gateTopPosition.y);
