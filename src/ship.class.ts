@@ -8,7 +8,7 @@ export class Ship implements Container {
     static readonly height: number = 30;
 
     private app: PIXI.Application;
-    private sprite: PIXI.Graphics;
+    private readonly sprite: PIXI.Graphics;
     private readonly color: number = 0xABABAB;
     private _empty: boolean = false;
 

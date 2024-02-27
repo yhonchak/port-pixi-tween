@@ -24,8 +24,8 @@ export class Port {
     private readonly emptyShipsQueue: Queue;
     private readonly fullShipsQueue: Queue;
 
-    private width: number;
-    private height: number;
+    private readonly width: number;
+    private readonly height: number;
     private docks: Dock[];
     private ships: Ship[];
 

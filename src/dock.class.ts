@@ -3,11 +3,11 @@ import { Container, Position } from './types';
 
 export class Dock implements Container {
     private app: PIXI.Application;
-    private sprite: PIXI.Graphics;
+    private readonly sprite: PIXI.Graphics;
 
     private readonly color: number = 0xEED202;
-    private width: number;
-    private height: number;
+    private readonly width: number;
+    private readonly height: number;
 
     private _empty: boolean = false;
     private _open: boolean = true;
