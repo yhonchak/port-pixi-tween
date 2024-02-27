@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { Position } from './types';
+import { Ship } from './ship.class';
 
 export class Queue {
     static gap: number = 10;
@@ -8,6 +9,7 @@ export class Queue {
     private readonly sprite: PIXI.Graphics;
 
     private length: number = 0;
+    private ships: Ship[];
 
     /**
      * The class constructor.
@@ -29,6 +31,8 @@ export class Queue {
         this.sprite.y = y;
 
         this.app.stage.addChild(this.sprite);
+
+        this.ships = [];
     }
 
     /**
@@ -37,7 +41,7 @@ export class Queue {
      */
     get availablePosition(): Position {
         return {
-            x: this.sprite.x + this.length,
+            x: this.sprite.x + this.ships.length * (Ship.width + Queue.gap),
             y: this.sprite.y
         }
     }
@@ -56,5 +60,13 @@ export class Queue {
      */
     decreaseLength(length: number): void {
         this.length -= length + Queue.gap;
+    }
+
+    /**
+     * Adds ship to the queue line.
+     * @param ship to be added
+     */
+    addShip(ship: Ship): void {
+        this.ships.push(ship);
     }
 }
