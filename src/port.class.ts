@@ -133,7 +133,7 @@ export class Port {
                                 this.docks[dockIndex].open = false;
                             })
                             .onComplete(async () => {
-                                this.moveShipToGate(ship, Port.shipTimeInPort)
+                                this.moveShipToGate(ship, Port.shipTimeInPort, Ship.tweenMiddleDuration)
                                     .onStart(() => {
                                         this.docks[dockIndex].open = true;
                                         // Choose corresponding queue
@@ -225,7 +225,7 @@ export class Port {
      * @returns Tween<PIXI.ObservablePoint>
      */
     private moveShipToDock(ship: Ship, dockIndex: number): Tween<PIXI.ObservablePoint> {
-        return ship.moveToTween(this.docks[dockIndex].parkingPosition).start();
+        return ship.moveToTween(this.docks[dockIndex].parkingPosition, Ship.tweenMiddleDuration).start();
     }
 
     /**
