@@ -122,8 +122,8 @@ export class Port {
                 // TODO: research issue when the browser tab is inactive:
                 //  this event triggered multiple times in one moment after backing to tab
 
-                // TODO: determine relevant queue
-                const queue: Queue = this.emptyShipsQueue;
+                // Choose corresponding queue
+                const queue: Queue = ship.empty ? this.emptyShipsQueue : this.fullShipsQueue;
                 // Find available dock
                 const dockIndex: number = this.findAvailableDock(ship);
                 if (dockIndex < 0) {
@@ -138,6 +138,8 @@ export class Port {
                             this.moveShipToGate(ship, Port.shipTimeInPort)
                                 .onStart(() => {
                                     this.docks[dockIndex].open = true;
+                                    // Choose corresponding queue
+                                    const queue: Queue = ship.empty ? this.emptyShipsQueue : this.fullShipsQueue;
                                     if (!queue.empty) {
                                         const firstShip: Ship = queue.firstShip;
                                         const firstShipDockIndex: number = this.findAvailableDock(firstShip);
