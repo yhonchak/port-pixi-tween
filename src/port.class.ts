@@ -117,8 +117,8 @@ export class Port {
         // Add the new ship to the class array
         this.ships.push(newShip);
 
-        const movingLoop: Function = (ship: Ship) => {
-            this.moveShipToGate(ship).onComplete(() => {
+        const movingLoop: Function = (ship: Ship, fromQueue: boolean = false) => {
+            this.moveShipToGate(ship, 0, fromQueue ? 1000 : 4000).onComplete(() => {
                 // TODO: research issue when the browser tab is inactive:
                 //  this event triggered multiple times in one moment after backing to tab
 
@@ -144,7 +144,7 @@ export class Port {
                                         queue.ships.forEach((shipInQueue: Ship) => {
                                             this.moveShipToQueue(shipInQueue, queue);
                                         });
-                                        movingLoop(firstShip);
+                                        movingLoop(firstShip, true);
                                     }
                                 }
                             })
@@ -195,15 +195,17 @@ export class Port {
      *
      * @param ship is a reference to ship instance
      * @param delay - delay before start in milliseconds
+     * @param duration - movement duration in milliseconds
      * @private
      * @returns Tween<PIXI.ObservablePoint>
      */
-    private moveShipToGate(ship: Ship, delay: number = 0): Tween<PIXI.ObservablePoint> {
+    private moveShipToGate(ship: Ship, delay: number = 0, duration: number = 4000): Tween<PIXI.ObservablePoint> {
         return ship.moveToTween(
             {
                 x: this.gateTopPosition.x,
                 y: this.gateBottomPosition.y - Math.round((this.gateBottomPosition.y - this.gateTopPosition.y) / 2)
-            }
+            },
+            duration
         ).delay(delay).start();
     }
 
