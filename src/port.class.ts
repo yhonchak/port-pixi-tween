@@ -148,6 +148,7 @@ export class Port {
                                             queue.ships.forEach((shipInQueue: Ship) => {
                                                 this.moveShipToQueue(shipInQueue, queue);
                                             });
+                                            // use recursion to provide the moving loop
                                             movingLoop(firstShip, true);
                                         }
                                     }
