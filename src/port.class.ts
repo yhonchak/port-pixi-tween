@@ -106,7 +106,7 @@ export class Port {
      */
     private startShipTravel(): void {
         // Create a ship
-        const newShip: Ship = new Ship(this.app, this.appWidth, 0);
+        const newShip: Ship = new Ship(this.app, this.appWidth, this.gateTopPosition.y);
         // Set the ship status (empty or full) randomly
         if (Math.floor(Math.random() * 2) === 0) {
             newShip.unload();
@@ -245,7 +245,7 @@ export class Port {
      * @returns Tween<PIXI.ObservablePoint>
      */
     private moveShipToOutside(ship: Ship): Tween<PIXI.ObservablePoint> {
-        return ship.moveToTween({ x: this.appWidth, y: this.appHeight }).start();
+        return ship.moveToTween({ x: this.appWidth, y: this.gateBottomPosition.y }).start();
     }
 
     /**
