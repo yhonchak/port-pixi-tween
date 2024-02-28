@@ -17,7 +17,7 @@ document.body.appendChild(app.view as unknown as Node);
 
 // Create port
 const portWidth: number = Math.round(appWidth / 3);
-const port: Port = new Port(app, portWidth, appHeight, appWidth, appHeight);
+new Port(app, portWidth, appHeight, appWidth, appHeight);
 
 setInterval(() => {
     TWEEN.update();
