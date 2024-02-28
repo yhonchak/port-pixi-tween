@@ -116,9 +116,6 @@ export class Port {
                     }
                 })
                 .onComplete(() => {
-                    // TODO: research issue when the browser tab is inactive:
-                    //  this event triggered multiple times in one moment after backing to tab
-
                     clearInterval(gateInterval);
 
                     // Choose corresponding queue
