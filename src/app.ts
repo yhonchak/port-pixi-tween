@@ -20,9 +20,6 @@ const portWidth: number = Math.round(appWidth / 3);
 const portHeight: number = appHeight;
 const port: Port = new Port(app, portWidth, portHeight, appWidth, appHeight);
 
-function animate(): void {
-    requestAnimationFrame(animate);
+setInterval(() => {
     TWEEN.update();
-}
-
-animate();
+}, 16); // call approximately 60 times per second, which corresponds to a frame rate of 60 frames per second (FPS)
