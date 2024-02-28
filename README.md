@@ -17,4 +17,4 @@ Visualization of the port operations using PixiJS, TweenJS and Typescript
 * run `npm i` to install the application
 * run `webpack --config webpack.config.js` to bundle the source code
 * run `npx http-server` to start a local server at http://localhost:8080
-* open your browser for watching visualisation
+* open your browser for watching visualization
