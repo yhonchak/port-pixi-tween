@@ -30,6 +30,8 @@ export class Port {
     private readonly height: number;
     private docks: Dock[];
 
+    private gateOpen: boolean = true;
+
     /**
      *  The class constructor.
      *
@@ -114,10 +116,25 @@ export class Port {
         }
 
         const movingLoop: Function = (ship: Ship, fromQueue: boolean = false) => {
-            this.moveShipToGate(ship, 0, fromQueue ? Ship.tweenShortDuration : Ship.tweenLongDuration)
+            let gateInterval: NodeJS.Timeout;
+            const toGateTween: Tween<PIXI.ObservablePoint> = this.moveShipToGate(ship, 0, fromQueue ? Ship.tweenShortDuration : Ship.tweenLongDuration)
+                .onStart(() => {
+                    gateInterval = setInterval(() => {
+                        if (this.gateOpen && toGateTween.isPaused()) {
+                            toGateTween.resume();
+                        }
+                    }, 50);
+                })
+                .onUpdate((object: PIXI.ObservablePoint, elapsed: number) => {
+                    if (!this.gateOpen && elapsed > 0.5 && toGateTween.isPlaying()) {
+                        toGateTween.pause();
+                    }
+                })
                 .onComplete(() => {
                     // TODO: research issue when the browser tab is inactive:
                     //  this event triggered multiple times in one moment after backing to tab
+
+                    clearInterval(gateInterval);
 
                     // Choose corresponding queue
                     const queue: Queue = ship.empty ? this.emptyShipsQueue : this.fullShipsQueue;
@@ -150,11 +167,17 @@ export class Port {
                                             }
                                         }
                                     })
+                                    .onUpdate((object: PIXI.ObservablePoint, elapsed: number) => {
+                                        if (elapsed > 0.5) {
+                                            this.gateOpen = false;
+                                        }
+                                    })
                                     .onComplete(() => {
                                         this.moveShipToOutside(ship)
                                             .onComplete(() => {
                                                 this.removeShip(ship);
                                             });
+                                        this.gateOpen = true;
                                     });
 
                                 await delay(Port.shipTimeInPort / 2);
