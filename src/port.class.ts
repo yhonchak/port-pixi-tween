@@ -2,11 +2,11 @@ import * as PIXI from 'pixi.js';
 import { Dock } from './dock.class';
 import { Ship } from './ship.class';
 import { Tween } from '@tweenjs/tween.js';
-import { Position } from './types';
 import { delay } from './utils';
 import { Queue } from './queue.class';
 import { ShipEmpty } from './ship.empty.class';
 import { ShipFull } from './ship.full.class';
+import { Gate } from './gate.class';
 
 export class Port {
     static readonly shipAppearanceFrequency: number = 8000; // Frequency of ships appearance: once per 8 seconds
@@ -20,8 +20,6 @@ export class Port {
     private readonly app: PIXI.Application;
     private readonly appWidth: number;
     private readonly appHeight: number;
-    private readonly gateTopPosition: Position;
-    private readonly gateBottomPosition: Position;
 
     private readonly emptyShipsQueue: Queue;
     private readonly fullShipsQueue: Queue;
@@ -30,7 +28,7 @@ export class Port {
     private readonly height: number;
     private docks: Dock[];
 
-    private gateOpen: boolean = true;
+    private gate: Gate;
 
     /**
      *  The class constructor.
@@ -56,29 +54,16 @@ export class Port {
         sprite.endFill();
         this.app.stage.addChild(sprite);
 
-        // Calculate Gate's positions
-        this.gateTopPosition = { x: this.width, y: Math.round(this.height / 3) };
-        this.gateBottomPosition = { x: this.width, y: Math.round(this.height - this.height / 3) };
+        // Create the port Gate with calculated positions
+        this.gate = new Gate(
+            this.app,
+            { x: this.width, y: Math.round(this.height / 3) },
+            { x: this.width, y: Math.round(this.height - this.height / 3) }
+        );
 
         // Create the queue lines
-        this.emptyShipsQueue = new Queue(this.app, this.gateTopPosition.x + 20, this.gateTopPosition.y);
-        this.fullShipsQueue = new Queue(this.app, this.gateBottomPosition.x + 20, this.gateBottomPosition.y);
-
-        // Create barriers graphics
-        const barrierWidth: number = 5;
-        const barrierColor: number = 0xEED202;
-
-        const barrierTop: PIXI.Graphics = new PIXI.Graphics();
-        barrierTop.beginFill(barrierColor);
-        barrierTop.drawRect(width - barrierWidth, 0, barrierWidth, this.gateTopPosition.y);
-        barrierTop.endFill();
-        this.app.stage.addChild(barrierTop);
-
-        const barrierBottom: PIXI.Graphics = new PIXI.Graphics();
-        barrierBottom.beginFill(barrierColor);
-        barrierBottom.drawRect(width - barrierWidth, this.gateBottomPosition.y, barrierWidth, this.height);
-        barrierBottom.endFill();
-        this.app.stage.addChild(barrierBottom);
+        this.emptyShipsQueue = new Queue(this.app, this.gate.topPosition.x + 20, this.gate.topPosition.y);
+        this.fullShipsQueue = new Queue(this.app, this.gate.bottomPosition.x + 20, this.gate.bottomPosition.y);
 
         // Create docks
         for (let i: number = 0; i < 4; i++) {
@@ -110,9 +95,9 @@ export class Port {
         let newShip: Ship;
         // Create a ship of random type (empty or full)
         if (Math.random() < 0.495) {
-            newShip = new ShipEmpty(this.app, this.appWidth, this.gateTopPosition.y);
+            newShip = new ShipEmpty(this.app, this.appWidth, this.gate.topPosition.y);
         } else {
-            newShip = new ShipFull(this.app, this.appWidth, this.gateTopPosition.y);
+            newShip = new ShipFull(this.app, this.appWidth, this.gate.topPosition.y);
         }
 
         const movingLoop: Function = (ship: Ship, fromQueue: boolean = false) => {
@@ -120,13 +105,13 @@ export class Port {
             const toGateTween: Tween<PIXI.ObservablePoint> = this.moveShipToGate(ship, 0, fromQueue ? Ship.tweenShortDuration : Ship.tweenLongDuration)
                 .onStart(() => {
                     gateInterval = setInterval(() => {
-                        if (this.gateOpen && toGateTween.isPaused()) {
+                        if (this.gate.open && toGateTween.isPaused()) {
                             toGateTween.resume();
                         }
                     }, 50);
                 })
                 .onUpdate((object: PIXI.ObservablePoint, elapsed: number) => {
-                    if (!this.gateOpen && elapsed > 0.5 && toGateTween.isPlaying()) {
+                    if (!this.gate.open && elapsed > 0.5 && toGateTween.isPlaying()) {
                         toGateTween.pause();
                     }
                 })
@@ -169,7 +154,7 @@ export class Port {
                                     })
                                     .onUpdate((object: PIXI.ObservablePoint, elapsed: number) => {
                                         if (elapsed > 0.5) {
-                                            this.gateOpen = false;
+                                            this.gate.open = false;
                                         }
                                     })
                                     .onComplete(() => {
@@ -177,7 +162,7 @@ export class Port {
                                             .onComplete(() => {
                                                 this.removeShip(ship);
                                             });
-                                        this.gateOpen = true;
+                                        this.gate.open = true;
                                     });
 
                                 await delay(Port.shipTimeInPort / 2);
@@ -231,8 +216,8 @@ export class Port {
     ): Tween<PIXI.ObservablePoint> {
         return ship.moveToTween(
             {
-                x: this.gateTopPosition.x,
-                y: this.gateBottomPosition.y - Math.round((this.gateBottomPosition.y - this.gateTopPosition.y) / 2)
+                x: this.gate.topPosition.x,
+                y: this.gate.bottomPosition.y - Math.round((this.gate.bottomPosition.y - this.gate.topPosition.y) / 2)
             },
             duration
         ).delay(delay).start();
@@ -270,7 +255,7 @@ export class Port {
      * @returns Tween<PIXI.ObservablePoint>
      */
     private moveShipToOutside(ship: Ship): Tween<PIXI.ObservablePoint> {
-        return ship.moveToTween({ x: this.appWidth, y: this.gateBottomPosition.y }).start();
+        return ship.moveToTween({ x: this.appWidth, y: this.gate.bottomPosition.y }).start();
     }
 
     /**
